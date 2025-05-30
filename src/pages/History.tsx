@@ -14,7 +14,7 @@ const History = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#f8f7f7] p-6 mt-16">
+    <div className="min-h-screen bg-[#f8f7f7] p-[10px] mt-16">
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex items-center gap-4">
           <SidebarTrigger className="text-[#8C6D73]" />

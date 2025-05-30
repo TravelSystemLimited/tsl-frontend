@@ -1,3 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;500;600;700&display=swap');
+
+* {
+  font-family: 'Lato', sans-serif;
+}
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -97,5 +104,9 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+  * {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
   }
 }

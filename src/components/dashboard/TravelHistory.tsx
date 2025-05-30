@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -153,25 +152,25 @@ export const TravelHistory: React.FC = () => {
           {filteredHistory.map((record) => (
             <div
               key={record.id}
-              className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex flex-col md:flex-row md:items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors gap-4"
             >
-              <div className="flex items-center gap-4">
-                <div className="p-2 bg-[#8C6D73] bg-opacity-10 rounded-full">
+              <div className="flex items-center gap-4 flex-1 min-w-0">
+                <div className="p-2 bg-[#8C6D73] bg-opacity-10 rounded-full flex-shrink-0">
                   <User className="h-4 w-4 text-[#8C6D73]" />
                 </div>
-                <div>
-                  <h4 className="font-medium text-gray-900">{record.employeeName}</h4>
+                <div className="min-w-0">
+                  <h4 className="font-medium text-gray-900 truncate">{record.employeeName}</h4>
                   <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <MapPin className="h-3 w-3" />
-                    {record.destination}
+                    <MapPin className="h-3 w-3 flex-shrink-0" />
+                    <span className="truncate">{record.destination}</span>
                   </div>
                 </div>
               </div>
-              <div className="text-right">
-                <Badge className={getStatusColor(record.status)}>
+              <div className="flex flex-col md:items-end gap-2">
+                <Badge className={`${getStatusColor(record.status)} w-fit`}>
                   {record.status}
                 </Badge>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-gray-500">
                   {record.departureDate} - {record.returnDate}
                 </p>
                 <p className="font-medium text-gray-900">${record.cost}</p>
