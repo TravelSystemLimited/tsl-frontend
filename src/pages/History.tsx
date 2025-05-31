@@ -42,7 +42,7 @@ const History = () => {
         </div>
 
         {/* Travel History Component */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="bg-white rounded-lg shadow-sm p-[10px] md:p-6">
           <div className="mb-6">
             <h2 className="text-xl font-semibold text-[#3b3b3b] mb-2">Complete Travel Records</h2>
             <p className="text-gray-600">Track and review all employee travel history with detailed information</p>
