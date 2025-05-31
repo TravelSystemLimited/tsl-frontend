@@ -14,14 +14,15 @@ const Employees = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#f8f7f7] p-6 mt-16">
+    <div className=" min-h-screen bg-[#f8f7f7] p-[20px] md:p-6 mt-16">
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex items-center gap-4">
           <SidebarTrigger className="text-[#8C6D73]" />
-          <div>
-            <h1 className="text-3xl font-bold text-[#3b3b3b]">Employee Management</h1>
-            <p className="text-gray-600 mt-1">Filter and manage employee travel profiles</p>
-          </div>
+          <div className="hidden sm:block">
+  <h1 className="text-3xl font-bold text-[#3b3b3b]">Employee Management</h1>
+  <p className="text-gray-600 mt-1">Filter and manage employee travel profiles</p>
+</div>
+
         </div>
 
         {/* Employee Stats */}
@@ -42,7 +43,7 @@ const Employees = () => {
         </div>
 
         {/* Employee Management Section */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="bg-white rounded-lg shadow-sm p-[4px] md:p-6">
           <div className="mb-6">
             <h2 className="text-xl font-semibold text-[#3b3b3b] mb-2">Employee Directory</h2>
             <p className="text-gray-600">Search, filter and manage employee travel authorizations and profiles</p>

@@ -43,7 +43,7 @@ const Analytics = () => {
         </div>
 
         {/* Analytics Dashboard */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="bg-white rounded-lg shadow-sm p-[5px] md:p-6">
           <div className="mb-6">
             <h2 className="text-xl font-semibold text-[#3b3b3b] mb-2">Detailed Analytics</h2>
             <p className="text-gray-600">Comprehensive spending analysis with charts and trends</p>
