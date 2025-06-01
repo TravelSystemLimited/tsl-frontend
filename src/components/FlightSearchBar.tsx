@@ -199,22 +199,20 @@ const FlightSearchBar: React.FC<FlightSearchBarProps> = ({ onSearch }) => {
         {/* Mobile Layout */}
         <div className="block md:hidden w-full">
           {/* Top Navigation Tabs */}
-          <div className="flex  justify-center mb-6">
-            <div className="flex bg-gray-100 rounded-full p-1">
-              <button className="px-4 py-2 rounded-full bg-white text-gray-900 font-medium text-sm shadow-sm">
-                Flights
-              </button>
-              <button className="px-4 py-2 rounded-full text-gray-600 font-medium text-sm">
-                Hotels
-              </button>
-              <button className="px-4 py-2 rounded-full text-gray-600 font-medium text-sm">
-                Cabs
-              </button>
-            </div>
-          </div>
+          <div className="flex bg-white border-b border-gray-200">
+          <button className="flex-1 px-4 py-3 text-center text-gray-900 border-b-2 border-red-500 font-medium">
+            Flights
+          </button>
+          <button className="flex-1 px-4 py-3 text-center text-gray-500 border-b-2 border-transparent">
+            Hotels
+          </button>
+          <button className="flex-1 px-4 py-3 text-center text-gray-500 border-b-2 border-transparent">
+            Cabs
+          </button>
+        </div>
 
           {/* Origin and Destination - Mobile Stack */}
-          <div className="bg-white rounded-lg border border-gray-200 mb-4 relative">
+          <div className="bg-white rounded-lg border border-gray-200 mt-4 mb-4 relative">
             {/* Origin */}
             <div className="relative border-b border-gray-200">
               <div className="flex items-center p-4" onClick={() => openMobileModal('source')}>
@@ -430,37 +428,7 @@ const FlightSearchBar: React.FC<FlightSearchBarProps> = ({ onSearch }) => {
 
           {/* Dates and Class */}
           <div className="flex flex-col sm:flex-row w-full gap-3">
-            <div className="w-full sm:w-1/3">
-              <label className="block text-xs text-gray-500 mb-1">DEPART</label>
-              <input
-                type="date"
-                value={formatDateForInput(departDate)}
-                onChange={handleDepartDateChange}
-                min={formatDateForInput(new Date())}
-                className="p-2 border rounded w-full text-sm sm:text-base"
-                style={{
-                  minHeight: '40px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.375rem'
-                }}
-              />
-            </div>
-
-            <div className="w-full sm:w-1/3">
-              <label className="block text-xs text-gray-500 mb-1">RETURN</label>
-              <input
-                type="date"
-                value={formatDateForInput(returnDate)}
-                onChange={handleReturnDateChange}
-                min={formatDateForInput(departDate) || formatDateForInput(new Date())}
-                className="p-2 border rounded w-full text-sm sm:text-base"
-                style={{
-                  minHeight: '40px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.375rem'
-                }}
-              />
-            </div>
+                
 
             <div className="w-full sm:w-1/3">
               <label className="block text-xs text-gray-500 mb-1">CLASS</label>
