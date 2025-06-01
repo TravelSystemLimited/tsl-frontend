@@ -1,3 +1,4 @@
+import { Search } from 'lucide-react';
 import React, { useState, useRef, useEffect } from 'react';
 
 type PlaceOption = {
@@ -36,7 +37,7 @@ const FlightSearchBar: React.FC<FlightSearchBarProps> = ({ onSearch }) => {
   const handleDepartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newDate = new Date(e.target.value);
     setDepartDate(newDate);
-    sessionStorage.setItem("departureDate",formatDateForInput(departDate));
+    // Note: Removed sessionStorage usage as it's not supported in Claude artifacts
     // If return date is before the new depart date, update return date too
     if (returnDate && newDate > returnDate) {
       const newReturnDate = new Date(newDate);
@@ -44,9 +45,7 @@ const FlightSearchBar: React.FC<FlightSearchBarProps> = ({ onSearch }) => {
       setReturnDate(newReturnDate);
     }
   };
-useEffect(()=>{
-  sessionStorage.setItem("departureDate",formatDateForInput(departDate));
-},[])
+
   const handleReturnDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setReturnDate(new Date(e.target.value));
   };
@@ -159,45 +158,61 @@ useEffect(()=>{
   );
 
   return (
-    <div className="flex flex-col md:flex-row items-center gap-3 p-4 bg-white shadow  w-full  mx-auto">
-      {/* Source and Destination */}
-      <div className="flex flex-col sm:flex-row w-full gap-3">
-        <div className="w-full sm:w-1/2 relative">
-          <label className="block text-xs text-gray-500 mb-1">FROM</label>
-          <div className="relative">
-            <input
-              type="text"
-              value={sourceInput}
-              onChange={handleSourceInputChange}
-              onFocus={() => setShowSourceSuggestions(sourceInput.length > 0)}
-              onBlur={() => setTimeout(() => setShowSourceSuggestions(false), 150)}
-              placeholder="City or Airport"
-              className="p-2 border rounded w-full text-sm sm:text-base"
-              style={{
-                minHeight: '40px',
-                border: '1px solid #d1d5db',
-                borderRadius: '0.375rem',
-                boxShadow: 'none'
-              }}
-            />
-            {source && (
-              <button
-                onClick={() => {
-                  handleClearSource();
-                  setSourceInput('');
-                }}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
-                ✕
-              </button>
-            )}
+    <div className="flex flex-col md:flex-row items-center gap-3 p-4 bg-white shadow w-full mx-auto">
+      {/* Mobile Layout */}
+      <div className="block md:hidden w-full">
+        {/* Top Navigation Tabs */}
+        <div className="flex  justify-center mb-6">
+          <div className="flex bg-gray-100 rounded-full p-1">
+            <button className="px-4 py-2 rounded-full bg-white text-gray-900 font-medium text-sm shadow-sm">
+              Flights
+            </button>
+            <button className="px-4 py-2 rounded-full text-gray-600 font-medium text-sm">
+              Hotels
+            </button>
+            <button className="px-4 py-2 rounded-full text-gray-600 font-medium text-sm">
+              Cabs
+            </button>
+          </div>
+        </div>
+
+        {/* Origin and Destination - Mobile Stack */}
+        <div className="bg-white rounded-lg border border-gray-200 mb-4 relative">
+          {/* Origin */}
+          <div className="relative border-b border-gray-200">
+            <div className="flex items-center p-4">
+              <div className="w-3 h-3 rounded-full bg-gray-400 mr-3 flex-shrink-0"></div>
+              <div className="flex-1">
+                <div className="text-xs text-gray-500 mb-1">Origin</div>
+                <input
+                  type="text"
+                  value={sourceInput}
+                  onChange={handleSourceInputChange}
+                  onFocus={() => setShowSourceSuggestions(sourceInput.length > 0)}
+                  onBlur={() => setTimeout(() => setShowSourceSuggestions(false), 150)}
+                  placeholder="Origin"
+                  className="w-full text-base font-medium text-gray-900 bg-transparent border-none outline-none p-0"
+                />
+              </div>
+              {source && (
+                <button
+                  onClick={() => {
+                    handleClearSource();
+                    setSourceInput('');
+                  }}
+                  className="text-gray-400 hover:text-gray-600 ml-2"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
             {showSourceSuggestions && filteredSourcePlaces.length > 0 && (
               <div className="absolute z-10 w-full bg-white border border-gray-200 rounded-md shadow-lg mt-1">
                 {filteredSourcePlaces.map((place, index) => (
                   <div
                     key={index}
                     className="p-2 hover:bg-gray-100 cursor-pointer"
-                    onMouseDown={(e) => e.preventDefault()} // Prevent blur from firing
+                    onMouseDown={(e) => e.preventDefault()}
                     onClick={() => selectSource(place)}
                   >
                     <div className="font-medium">{place.name}</div>
@@ -207,46 +222,51 @@ useEffect(()=>{
               </div>
             )}
           </div>
-        </div>
 
-        <div className="hidden sm:flex items-center justify-center text-2xl mt-6">⇌</div>
+          {/* Swap Icon */}
+          <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10">
+            <button className="w-8 h-8 bg-white border border-gray-300 rounded-full flex items-center justify-center shadow-sm">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-600">
+                <path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/>
+              </svg>
+            </button>
+          </div>
 
-        <div className="w-full sm:w-1/2 relative">
-          <label className="block text-xs text-gray-500 mb-1">TO</label>
+          {/* Destination */}
           <div className="relative">
-            <input
-              type="text"
-              value={destinationInput}
-              onChange={handleDestinationInputChange}
-              onFocus={() => setShowDestinationSuggestions(destinationInput.length > 0)}
-              onBlur={() => setTimeout(() => setShowDestinationSuggestions(false), 150)}
-              placeholder="City or Airport"
-              className="p-2 border rounded w-full text-sm sm:text-base"
-              style={{
-                minHeight: '40px',
-                border: '1px solid #d1d5db',
-                borderRadius: '0.375rem',
-                boxShadow: 'none'
-              }}
-            />
-            {destination && (
-              <button
-                onClick={() => {
-                  handleClearDestination();
-                  setDestinationInput('');
-                }}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
-                ✕
-              </button>
-            )}
+            <div className="flex items-center p-4">
+              <div className="w-3 h-3 rounded-full bg-gray-400 mr-3 flex-shrink-0"></div>
+              <div className="flex-1">
+                <div className="text-xs text-gray-500 mb-1">Destination</div>
+                <input
+                  type="text"
+                  value={destinationInput}
+                  onChange={handleDestinationInputChange}
+                  onFocus={() => setShowDestinationSuggestions(destinationInput.length > 0)}
+                  onBlur={() => setTimeout(() => setShowDestinationSuggestions(false), 150)}
+                  placeholder="Destination"
+                  className="w-full text-base font-medium text-gray-900 bg-transparent border-none outline-none p-0"
+                />
+              </div>
+              {destination && (
+                <button
+                  onClick={() => {
+                    handleClearDestination();
+                    setDestinationInput('');
+                  }}
+                  className="text-gray-400 hover:text-gray-600 ml-2"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
             {showDestinationSuggestions && filteredDestinationPlaces.length > 0 && (
               <div className="absolute z-10 w-full bg-white border border-gray-200 rounded-md shadow-lg mt-1">
                 {filteredDestinationPlaces.map((place, index) => (
                   <div
                     key={index}
                     className="p-2 hover:bg-gray-100 cursor-pointer"
-                    onMouseDown={(e) => e.preventDefault()} // Prevent blur from firing
+                    onMouseDown={(e) => e.preventDefault()}
                     onClick={() => selectDestination(place)}
                   >
                     <div className="font-medium">{place.name}</div>
@@ -257,67 +277,220 @@ useEffect(()=>{
             )}
           </div>
         </div>
+
+        {/* Dates Row - Mobile */}
+        <div className="flex gap-2 mb-4">
+          <div className="flex-1 bg-white rounded-lg border border-gray-200 p-4">
+            <div className="text-xs text-gray-500 mb-1">Departure</div>
+            <input
+              type="date"
+              value={formatDateForInput(departDate)}
+              onChange={handleDepartDateChange}
+              min={formatDateForInput(new Date())}
+              className="w-full text-base font-medium text-gray-900 bg-transparent border-none outline-none p-0"
+            />
+          </div>
+          <div className="flex-1 bg-white rounded-lg border border-gray-200 p-4">
+            <div className="text-xs text-gray-500 mb-1">Return</div>
+            <input
+              type="date"
+              value={formatDateForInput(returnDate)}
+              onChange={handleReturnDateChange}
+              min={formatDateForInput(departDate) || formatDateForInput(new Date())}
+              className="w-full text-base font-medium text-gray-900 bg-transparent border-none outline-none p-0"
+            />
+          </div>
+        </div>
+
+        {/* Bottom Row - Mobile */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center">
+            <span className="text-sm text-gray-700 mr-2">Round trip</span>
+            <span className="text-sm text-gray-500 mr-4">👤 1</span>
+            <select
+              value={flightClass}
+              onChange={(e) => setFlightClass(e.target.value)}
+              className="text-sm text-gray-700 bg-transparent border-none outline-none"
+            >
+              <option>Economy</option>
+              <option>Business</option>
+              <option>First</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Explore Button - Mobile */}
+        <button
+  onClick={handleSearch}
+  className="w-full bg-[#8c6d73] text-white py-3 rounded-lg font-medium text-base flex items-center justify-center gap-2"
+>
+  <Search className="w-4 h-4" />
+  Explore
+</button>
+
       </div>
 
-      {/* Dates and Class */}
-      <div className="flex flex-col sm:flex-row w-full gap-3">
-        <div className="w-full sm:w-1/3">
-          <label className="block text-xs text-gray-500 mb-1">DEPART</label>
-          <input
-            type="date"
-            value={formatDateForInput(departDate)}
-            onChange={handleDepartDateChange}
-            min={formatDateForInput(new Date())}
-            className="p-2 border rounded w-full text-sm sm:text-base"
-            style={{
-              minHeight: '40px',
-              border: '1px solid #d1d5db',
-              borderRadius: '0.375rem'
-            }}
-          />
+      {/* Desktop Layout - Unchanged */}
+      <div className="hidden md:flex md:flex-row items-center gap-3 w-full">
+        {/* Source and Destination */}
+        <div className="flex flex-col sm:flex-row w-full gap-3">
+          <div className="w-full sm:w-1/2 relative">
+            <label className="block text-xs text-gray-500 mb-1">FROM</label>
+            <div className="relative">
+              <input
+                type="text"
+                value={sourceInput}
+                onChange={handleSourceInputChange}
+                onFocus={() => setShowSourceSuggestions(sourceInput.length > 0)}
+                onBlur={() => setTimeout(() => setShowSourceSuggestions(false), 150)}
+                placeholder="City or Airport"
+                className="p-2 border rounded w-full text-sm sm:text-base"
+                style={{
+                  minHeight: '40px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.375rem',
+                  boxShadow: 'none'
+                }}
+              />
+              {source && (
+                <button
+                  onClick={() => {
+                    handleClearSource();
+                    setSourceInput('');
+                  }}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
+              )}
+              {showSourceSuggestions && filteredSourcePlaces.length > 0 && (
+                <div className="absolute z-10 w-full bg-white border border-gray-200 rounded-md shadow-lg mt-1">
+                  {filteredSourcePlaces.map((place, index) => (
+                    <div
+                      key={index}
+                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => selectSource(place)}
+                    >
+                      <div className="font-medium">{place.name}</div>
+                      <div className="text-sm text-gray-500">{place.fullName}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="hidden sm:flex items-center justify-center text-2xl mt-6">⇌</div>
+
+          <div className="w-full sm:w-1/2 relative">
+            <label className="block text-xs text-gray-500 mb-1">TO</label>
+            <div className="relative">
+              <input
+                type="text"
+                value={destinationInput}
+                onChange={handleDestinationInputChange}
+                onFocus={() => setShowDestinationSuggestions(destinationInput.length > 0)}
+                onBlur={() => setTimeout(() => setShowDestinationSuggestions(false), 150)}
+                placeholder="City or Airport"
+                className="p-2 border rounded w-full text-sm sm:text-base"
+                style={{
+                  minHeight: '40px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.375rem',
+                  boxShadow: 'none'
+                }}
+              />
+              {destination && (
+                <button
+                  onClick={() => {
+                    handleClearDestination();
+                    setDestinationInput('');
+                  }}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
+              )}
+              {showDestinationSuggestions && filteredDestinationPlaces.length > 0 && (
+                <div className="absolute z-10 w-full bg-white border border-gray-200 rounded-md shadow-lg mt-1">
+                  {filteredDestinationPlaces.map((place, index) => (
+                    <div
+                      key={index}
+                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => selectDestination(place)}
+                    >
+                      <div className="font-medium">{place.name}</div>
+                      <div className="text-sm text-gray-500">{place.fullName}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
-        <div className="w-full sm:w-1/3">
-          <label className="block text-xs text-gray-500 mb-1">RETURN</label>
-          <input
-            type="date"
-            value={formatDateForInput(returnDate)}
-            onChange={handleReturnDateChange}
-            min={formatDateForInput(departDate) || formatDateForInput(new Date())}
-            className="p-2 border rounded w-full text-sm sm:text-base"
-            style={{
-              minHeight: '40px',
-              border: '1px solid #d1d5db',
-              borderRadius: '0.375rem'
-            }}
-          />
+        {/* Dates and Class */}
+        <div className="flex flex-col sm:flex-row w-full gap-3">
+          <div className="w-full sm:w-1/3">
+            <label className="block text-xs text-gray-500 mb-1">DEPART</label>
+            <input
+              type="date"
+              value={formatDateForInput(departDate)}
+              onChange={handleDepartDateChange}
+              min={formatDateForInput(new Date())}
+              className="p-2 border rounded w-full text-sm sm:text-base"
+              style={{
+                minHeight: '40px',
+                border: '1px solid #d1d5db',
+                borderRadius: '0.375rem'
+              }}
+            />
+          </div>
+
+          <div className="w-full sm:w-1/3">
+            <label className="block text-xs text-gray-500 mb-1">RETURN</label>
+            <input
+              type="date"
+              value={formatDateForInput(returnDate)}
+              onChange={handleReturnDateChange}
+              min={formatDateForInput(departDate) || formatDateForInput(new Date())}
+              className="p-2 border rounded w-full text-sm sm:text-base"
+              style={{
+                minHeight: '40px',
+                border: '1px solid #d1d5db',
+                borderRadius: '0.375rem'
+              }}
+            />
+          </div>
+
+          <div className="w-full sm:w-1/3">
+            <label className="block text-xs text-gray-500 mb-1">CLASS</label>
+            <select
+              value={flightClass}
+              onChange={(e) => setFlightClass(e.target.value)}
+              className="p-2 border rounded w-full text-sm sm:text-base"
+              style={{
+                minHeight: '40px',
+                border: '1px solid #d1d5db',
+                borderRadius: '0.375rem'
+              }}
+            >
+              <option>Economy</option>
+              <option>Business</option>
+              <option>First</option>
+            </select>
+          </div>
         </div>
 
-        <div className="w-full sm:w-1/3">
-          <label className="block text-xs text-gray-500 mb-1">CLASS</label>
-          <select
-            value={flightClass}
-            onChange={(e) => setFlightClass(e.target.value)}
-            className="p-2 border rounded w-full text-sm sm:text-base"
-            style={{
-              minHeight: '40px',
-              border: '1px solid #d1d5db',
-              borderRadius: '0.375rem'
-            }}
-          >
-            <option>Economy</option>
-            <option>Business</option>
-            <option>First</option>
-          </select>
-        </div>
+        <button
+          onClick={handleSearch}
+          className="mt-2 sm:mt-4 bg-[#8c6d73] text-white px-6 py-2 rounded-full hover:bg-[#8a767a] w-full sm:w-auto transition-colors"
+        >
+          Search 
+        </button>
       </div>
-
-      <button
-        onClick={handleSearch}
-        className="mt-2 sm:mt-4 bg-[#8c6d73] text-white px-6 py-2 rounded-full hover:bg-[#8a767a] w-full sm:w-auto transition-colors"
-      >
-        Search 
-      </button>
     </div>
   );
 };
