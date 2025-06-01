@@ -5,15 +5,57 @@ import React, { useEffect, useState } from 'react';
 
 const CabBookingForm: React.FC = () => {
      const { selectedDestination } = useFlightStore();
-  const [from, setFrom] = useState(selectedDestination);
-  useEffect(() => {
-    if (selectedDestination) {
-      setFrom(selectedDestination);
-    }
-  }, [selectedDestination]);
-  const [to, setTo] = useState('');
-  const [pickupDate, setPickupDate] = useState('');
-  const [pickupTime, setPickupTime] = useState('');
+     const addOneHour = (timeStr: string) => {
+  const [hours, minutes] = timeStr.split(":").map(Number);
+  const date = new Date();
+  date.setHours(hours + 1);
+  date.setMinutes(minutes);
+  return date.toTimeString().slice(0, 5); // Return in "HH:MM" format
+};
+
+const storedHotel = sessionStorage.getItem("selectedHotel");
+const storedFlight = sessionStorage.getItem("selectedFlight");
+
+const parsedHotel = storedHotel ? JSON.parse(storedHotel) : null;
+const parsedFlight = storedFlight ? JSON.parse(storedFlight) : null;
+
+// Setup state
+const [from, setFrom] = useState("");
+const [to, setTo] = useState("");
+const [pickupDate, setPickupDate] = useState("");
+const [pickupTime, setPickupTime] = useState("");
+const formatDepartureDate = (dateStr: string): string => {
+  const [day, monthShort] = dateStr.split(" ");
+  const monthMap: { [key: string]: string } = {
+    Jan: "01",
+    Feb: "02",
+    Mar: "03",
+    Apr: "04",
+    May: "05",
+    Jun: "06",
+    Jul: "07",
+    Aug: "08",
+    Sep: "09",
+    Oct: "10",
+    Nov: "11",
+    Dec: "12",
+  };
+
+  const year = new Date().getFullYear(); // or use selected year if available
+  const formattedDate = `${day.padStart(2, "0")}-${monthMap[monthShort]}-${year}`;
+  return formattedDate;
+};
+
+useEffect(() => {
+  if (parsedFlight && parsedHotel) {
+    const convertedDate = formatDepartureDate(parsedFlight.departureDate);
+const departdate=sessionStorage.getItem("departureDate")
+    setFrom(parsedFlight.to);
+    setTo(parsedHotel.name);
+    setPickupDate(departdate); // Now in dd-mm-yyyy fhormat
+    setPickupTime(addOneHour(parsedFlight.arrivalTime));
+  }
+}, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

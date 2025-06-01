@@ -205,22 +205,22 @@ const selectedCab = storedCab ? JSON.parse(storedCab) : {
               <div className="space-y-3 mb-4">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Flight</span>
-                  <span className="font-medium">${selectedFlight.price}</span>
+                  <span className="font-medium">₹{selectedFlight.price}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Hotel</span>
-                  <span className="font-medium">${selectedHotel.price}</span>
+                  <span className="font-medium">₹{selectedHotel.price}</span>
                 </div>
              
                   <div className="flex justify-between">
                     <span className="text-gray-600">Transportation</span>
-                    <span className="font-medium">${selectedCab.price}</span>
+                    <span className="font-medium">₹{selectedCab.price}</span>
                   </div>
                
                 <div className="border-t border-gray-200 pt-3 mt-3">
                   <div className="flex justify-between">
                     <span className="font-bold text-gray-800">Total</span>
-                    <span className="font-bold text-[#8C6D73]">${totalPrice}</span>
+                    <span className="font-bold text-[#8C6D73]">₹{totalPrice}</span>
                   </div>
                 </div>
               </div>

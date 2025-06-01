@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 type PlaceOption = {
   label: string;
@@ -36,6 +36,7 @@ const FlightSearchBar: React.FC<FlightSearchBarProps> = ({ onSearch }) => {
   const handleDepartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newDate = new Date(e.target.value);
     setDepartDate(newDate);
+    sessionStorage.setItem("departureDate",formatDateForInput(departDate));
     // If return date is before the new depart date, update return date too
     if (returnDate && newDate > returnDate) {
       const newReturnDate = new Date(newDate);
@@ -43,7 +44,9 @@ const FlightSearchBar: React.FC<FlightSearchBarProps> = ({ onSearch }) => {
       setReturnDate(newReturnDate);
     }
   };
-
+useEffect(()=>{
+  sessionStorage.setItem("departureDate",formatDateForInput(departDate));
+},[])
   const handleReturnDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setReturnDate(new Date(e.target.value));
   };
