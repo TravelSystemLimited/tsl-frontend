@@ -117,7 +117,7 @@ export const PendingRequestsSection: React.FC<PendingRequestsSectionProps> = ({ 
 
   return (
     <>
-      <Card className="bg-white border-none shadow-md">
+      <Card className="bg-white border-none w-[950px] shadow-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-[#3b3b3b]">
             <Clock className="h-5 w-5" />
@@ -165,7 +165,7 @@ export const PendingRequestsSection: React.FC<PendingRequestsSectionProps> = ({ 
       </Card>
 
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-  <DialogContent className="max-w-2xl rounded-lg">
+  <DialogContent className="rounded-lg">
     <DialogHeader className="border-b pb-4">
       <div className="flex items-center gap-3">
         {selectedRequest && (

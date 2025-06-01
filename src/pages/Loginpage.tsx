@@ -11,7 +11,7 @@ const LoginPage: React.FC = () => {
     if (email.value === "manager@gmail.com") {
       navigate("/manager");
     }else{
-        navigate("/flights");
+        navigate("/employee");
     }
     // Add other email checks or authentication logic here
   };

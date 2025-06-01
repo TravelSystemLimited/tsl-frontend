@@ -14,7 +14,7 @@ const History = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#f8f7f7] p-6 mt-16">
+    <div className="min-h-screen bg-[#f8f7f7] p-[10px] mt-16">
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex items-center gap-4">
           <SidebarTrigger className="text-[#8C6D73]" />
@@ -42,7 +42,7 @@ const History = () => {
         </div>
 
         {/* Travel History Component */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="bg-white rounded-lg shadow-sm p-[10px] md:p-6">
           <div className="mb-6">
             <h2 className="text-xl font-semibold text-[#3b3b3b] mb-2">Complete Travel Records</h2>
             <p className="text-gray-600">Track and review all employee travel history with detailed information</p>
