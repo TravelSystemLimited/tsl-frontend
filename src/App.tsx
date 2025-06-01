@@ -60,7 +60,7 @@ const App = () => {
 
             <Route path="/cabs" element={<CabBooking/>} />
             <Route path="/hotels" element={<HotelBooking />} />
-            
+            <Route path="/flights" element={<Flights />} />
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route index element={<Dashboard />} />
               <Route path="requests" element={<Requests />} />
