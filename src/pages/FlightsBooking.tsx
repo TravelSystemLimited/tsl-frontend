@@ -31,6 +31,12 @@ type Flight = {
   flightType: string;
   travelClass: string;
 };
+const mockEmployees = [
+  { id: 1, name: 'John Doe', email: 'john@example.com' },
+  { id: 2, name: 'Jane Smith', email: 'jane@example.com' },
+  { id: 3, name: 'Robert Johnson', email: 'robert@example.com' },
+  { id: 4, name: 'Emily Davis', email: 'emily@example.com' },
+];
 
 const FlightBooking = () => {
   const [hasSearched, setHasSearched] = useState(false);
@@ -42,6 +48,7 @@ const FlightBooking = () => {
     returnDate: null as Date | null,
     flightClass: 'Economy',
   });
+  
 
   useEffect(() => {
     // Clear other selections
@@ -64,7 +71,7 @@ const FlightBooking = () => {
         arrivalTime: '21:15',
         departureDate: departureDate,
         arrivalDate: returnDate,
-        price: 26440,
+        price: 10400,
         flightType: 'Direct Flight',
         travelClass: 'Economy',
       },
@@ -76,7 +83,7 @@ const FlightBooking = () => {
         arrivalTime: '22:15',
         departureDate: departureDate,
         arrivalDate: returnDate,
-        price: 19478,
+        price: 15478,
         flightType: 'Direct Flight',
         travelClass: 'Economy',
       },
@@ -88,7 +95,7 @@ const FlightBooking = () => {
         arrivalTime: '20:15',
         departureDate: departureDate,
         arrivalDate: returnDate,
-        price: 20540,
+        price: 16540,
         flightType: 'Direct Flight',
         travelClass: 'Economy',
       },
@@ -100,7 +107,7 @@ const FlightBooking = () => {
         arrivalTime: '12:15',
         departureDate: '14 Aug',
         arrivalDate: '15 Aug',
-        price: 21247,
+        price: 17247,
         flightType: 'Direct Flight',
         travelClass: 'Economy',
       },
@@ -114,7 +121,9 @@ const FlightBooking = () => {
     returnDate: Date | null;
     flightClass: string;
   }) => {
+      if (!params.source || !params.destination || !params.departDate) return;
     setHasSearched(true);
+    
     setSearchParams({
       from: params.source?.value.structured_formatting.main_text || '',
       to: params.destination?.value.structured_formatting.main_text || '',
@@ -138,7 +147,7 @@ const FlightBooking = () => {
         arrivalTime: '21:15',
         departureDate: departureDate,
         arrivalDate: returnDate,
-        price: 26440,
+        price:  10400,
         flightType: 'Direct Flight',
         travelClass: params.flightClass,
       },
@@ -150,7 +159,7 @@ const FlightBooking = () => {
         arrivalTime: '22:15',
         departureDate: departureDate,
         arrivalDate: returnDate,
-        price: 19478,
+        price: 15478,
         flightType: 'Direct Flight',
         travelClass: params.flightClass,
       },
@@ -162,7 +171,7 @@ const FlightBooking = () => {
         arrivalTime: '20:15',
         departureDate: departureDate,
         arrivalDate: returnDate,
-        price: 20540,
+        price: 16540,
         flightType: 'Direct Flight',
         travelClass: params.flightClass,
       },
@@ -174,7 +183,7 @@ const FlightBooking = () => {
         arrivalTime: '12:15',
         departureDate: '14 Aug',
         arrivalDate: '15 Aug',
-        price: 21247,
+        price: 17247,
         flightType: 'Direct Flight',
         travelClass: params.flightClass,
       },
@@ -192,10 +201,10 @@ const FlightBooking = () => {
       {/* Flight search bar */}
       <FlightSearchBar onSearch={handleSearch} />
 
-      {hasSearched || flights.some(flight => flight.from && flight.to) ? (
+      {hasSearched  ? (
         /* Flight results */
         <div className="mt-8 pb-9">
-          <h2 className="text-lg font-semibold mb-4 ml-4">
+          <h2 className="text-sm md:text-lg text-gray-700 font-semibold mb-4 ml-4">
             Flights from {searchParams.from || flights[0]?.from} to {searchParams.to || flights[0]?.to}
           </h2>
           <div className="grid gap-6 p-3 sm:grid-cols-2 lg:grid-cols-2 text-center">

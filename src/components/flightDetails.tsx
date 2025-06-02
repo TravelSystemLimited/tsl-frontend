@@ -91,7 +91,7 @@ const FlightCard = ({
         {/* Flight Icon */}
         <div className="flex gap-2 items-center">
           <MdFlightTakeoff className="w-5 h-5 text-gray-500  mb-1" />
-          <div className="w-32 border-t border-gray-300" />
+          <div className="w-16 md:w-32 border-t border-gray-300" />
           <MdFlightLand className="w-5 h-5 text-gray-500  mb-1"/>
         </div>
 
