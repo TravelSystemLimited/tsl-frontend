@@ -24,6 +24,7 @@ import Checkout from "./pages/Checkout";
 import FlightBooking from "./pages/FlightsBooking";
 import HotelBooking from "./pages/HotelBooking";
 import CabBooking from "./pages/CabBooking";
+import Employees from "./pages/Employees";
 
 
 
@@ -66,6 +67,8 @@ const App = () => {
               <Route path="requests" element={<Requests />} />
               <Route path="analytics" element={<Analytics />} />
               <Route path="history" element={<History />} />
+              <Route path="employees" element={<Employees />} />
+
     
               <Route path="bookings" element={<Bookings />} />
               

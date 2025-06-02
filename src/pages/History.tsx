@@ -19,31 +19,32 @@ const History = () => {
         <div className="flex items-center gap-4">
           <SidebarTrigger className="text-[#8C6D73]" />
           <div>
-            <h1 className="text-3xl font-bold text-[#3b3b3b]">Travel History</h1>
-            <p className="text-gray-600 mt-1">View past trips and travel records</p>
+            <h1 className="text-2xl  md:text-3xl font-bold text-[#3b3b3b]">Travel History</h1>
+            <p className="text-gray-600 text-[14px] md:text-[16px] mt-1">View past trips and travel records</p>
           </div>
         </div>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {recentStats.map((stat, index) => (
-            <Card key={index} className="bg-white border-none shadow-sm">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600">{stat.label}</p>
-                    <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
-                  </div>
-                  <stat.icon className={`h-8 w-8 ${stat.color}`} />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+  {recentStats.map((stat, index) => (
+    <Card key={index} className="bg-white border-none shadow-sm">
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-gray-600">{stat.label}</p>
+            <p className={`text-1xl font-bold ${stat.color}`}>{stat.value}</p>
+          </div>
+          <stat.icon className={`h-6 w-6 ${stat.color}`} />
         </div>
+      </CardContent>
+    </Card>
+  ))}
+</div>
+
 
         {/* Travel History Component */}
-        <div className="bg-white rounded-lg shadow-sm p-[10px] md:p-6">
-          <div className="mb-6">
+        <div className="bg-white rounded-lg shadow-sm  md:p-6">
+          <div className="mb-6 p-6">
             <h2 className="text-xl font-semibold text-[#3b3b3b] mb-2">Complete Travel Records</h2>
             <p className="text-gray-600">Track and review all employee travel history with detailed information</p>
           </div>

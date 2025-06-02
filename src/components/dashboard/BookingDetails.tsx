@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Plane, Hotel, Car, Search, Eye, Download, PlaneIcon } from 'lucide-react';
+import { PDFDownloadLink, Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 
 interface Booking {
   id: string;
@@ -70,6 +71,146 @@ const bookings: Booking[] = [
   }
 ];
 
+// PDF Document styles
+const styles = StyleSheet.create({
+  page: {
+    padding: 30,
+    fontFamily: 'Helvetica'
+  },
+  header: {
+    fontSize: 20,
+    marginBottom: 20,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: '#3b3b3b'
+  },
+  section: {
+    marginBottom: 15,
+    paddingBottom: 15,
+    borderBottom: '1px solid #eee'
+  },
+  label: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    color: '#555'
+  },
+  value: {
+    fontSize: 12,
+    marginBottom: 10,
+    color: '#333'
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10
+  },
+  col: {
+    width: '48%'
+  },
+  status: {
+    fontSize: 12,
+    padding: '3px 8px',
+    borderRadius: 4,
+    marginTop: 5,
+  }
+});
+
+// PDF Document component
+const BookingPDF = ({ booking }: { booking: Booking }) => {
+  const statusColors = {
+    confirmed: '#d1fae5',
+    pending: '#fef3c7',
+    cancelled: '#fee2e2'
+  };
+
+  const statusTextColors = {
+    confirmed: '#065f46',
+    pending: '#92400e',
+    cancelled: '#b91c1c'
+  };
+
+  return (
+    <Document>
+      <Page size="A4" style={styles.page}>
+        <Text style={styles.header}>Booking Details</Text>
+        
+        <View style={styles.section}>
+          <Text style={styles.label}>Booking Reference</Text>
+          <Text style={styles.value}>{booking.bookingReference}</Text>
+        </View>
+        
+        <View style={styles.row}>
+          <View style={styles.col}>
+            <Text style={styles.label}>Employee Name</Text>
+            <Text style={styles.value}>{booking.employeeName}</Text>
+          </View>
+          <View style={styles.col}>
+            <Text style={styles.label}>Booking Type</Text>
+            <Text style={styles.value}>{booking.type.charAt(0).toUpperCase() + booking.type.slice(1)}</Text>
+          </View>
+        </View>
+        
+        <View style={styles.row}>
+          <View style={styles.col}>
+            <Text style={styles.label}>Destination</Text>
+            <Text style={styles.value}>{booking.destination}</Text>
+          </View>
+          <View style={styles.col}>
+            <Text style={styles.label}>Date</Text>
+            <Text style={styles.value}>{booking.date}</Text>
+          </View>
+        </View>
+        
+        <View style={styles.row}>
+          <View style={styles.col}>
+            <Text style={styles.label}>Status</Text>
+            <Text style={{
+              ...styles.status,
+              backgroundColor: statusColors[booking.status],
+              color: statusTextColors[booking.status]
+            }}>
+              {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+            </Text>
+          </View>
+          <View style={styles.col}>
+            <Text style={styles.label}>Cost</Text>
+            <Text style={styles.value}>${booking.cost.toFixed(2)}</Text>
+          </View>
+        </View>
+        
+        <View style={styles.section}>
+          <Text style={styles.label}>Booking Details</Text>
+          {booking.type === 'flight' && (
+            <>
+              <Text style={styles.value}>Airline: {booking.details.airline}</Text>
+              <Text style={styles.value}>Flight Number: {booking.details.flightNumber}</Text>
+              <Text style={styles.value}>Duration: {booking.details.duration}</Text>
+            </>
+          )}
+          {booking.type === 'hotel' && (
+            <>
+              <Text style={styles.value}>Hotel: {booking.details.hotelName}</Text>
+              <Text style={styles.value}>Duration: {booking.details.duration}</Text>
+            </>
+          )}
+          {booking.type === 'taxi' && (
+            <>
+              <Text style={styles.value}>Taxi Company: {booking.details.taxiCompany}</Text>
+              <Text style={styles.value}>Duration: {booking.details.duration}</Text>
+            </>
+          )}
+        </View>
+        
+        <View style={styles.section}>
+          <Text style={styles.label}>Issued On</Text>
+          <Text style={styles.value}>{new Date().toLocaleDateString()}</Text>
+        </View>
+      </Page>
+    </Document>
+  );
+};
+
 export const BookingDetails: React.FC = () => {
   const [filteredBookings, setFilteredBookings] = useState(bookings);
   const [searchTerm, setSearchTerm] = useState('');
@@ -103,6 +244,21 @@ export const BookingDetails: React.FC = () => {
       default: return 'bg-gray-100 text-gray-800';
     }
   };
+
+  const renderDownloadButton = (booking: Booking) => (
+    <PDFDownloadLink 
+      document={<BookingPDF booking={booking} />} 
+      fileName={`booking_${booking.bookingReference}.pdf`}
+      className="inline-block"
+    >
+      {({ loading }) => (
+        <Button variant="outline" size="sm" disabled={loading}>
+          <Download className="h-3 w-3 mr-1" />
+          {loading ? 'Generating...' : 'Download'}
+        </Button>
+      )}
+    </PDFDownloadLink>
+  );
 
   return (
     <Card className="bg-white border-none shadow-md">
@@ -154,7 +310,7 @@ export const BookingDetails: React.FC = () => {
                   </td>
                   <td className="py-3 px-4 text-sm">{booking.destination}</td>
                   <td className="py-3 px-4 text-sm">{booking.date}</td>
-                  <td className="py-3 px-4 text-sm font-medium">${booking.cost}</td>
+                  <td className="py-3 px-4 text-sm font-medium">${booking.cost.toFixed(2)}</td>
                   <td className="py-3 px-4">
                     <Badge className={getStatusColor(booking.status)}>
                       {booking.status}
@@ -185,30 +341,38 @@ export const BookingDetails: React.FC = () => {
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                   <div className="bg-muted p-2 rounded-full">
-                                    <PlaneIcon className="w-6 h-6 text-primary" />
+                                    {getBookingIcon(selectedBooking.type)}
                                   </div>
                                   <div>
-                                    <p className="font-semibold">{selectedBooking.details.airline || "Airline"}</p>
-                                    <p className="text-sm text-gray-500">{selectedBooking.details.flightNumber || "Flight Number"}</p>
+                                    <p className="font-semibold">
+                                      {selectedBooking.type === 'flight' && selectedBooking.details.airline}
+                                      {selectedBooking.type === 'hotel' && selectedBooking.details.hotelName}
+                                      {selectedBooking.type === 'taxi' && selectedBooking.details.taxiCompany}
+                                    </p>
+                                    {selectedBooking.type === 'flight' && (
+                                      <p className="text-sm text-gray-500">{selectedBooking.details.flightNumber}</p>
+                                    )}
                                   </div>
                                 </div>
-                                <Badge className="bg-green-100 text-green-700 text-sm">Direct</Badge>
+                                <Badge className={getStatusColor(selectedBooking.status)}>
+                                  {selectedBooking.status}
+                                </Badge>
                               </div>
 
                               <div className="flex items-center justify-between px-2">
                                 <div className="text-center">
-                                  <p className="text-lg font-bold">{"06:30 AM"}</p>
-                                  <p className="text-xs text-gray-500">Departure</p>
+                                  <p className="text-lg font-bold">{selectedBooking.date}</p>
+                                  <p className="text-xs text-gray-500">Date</p>
                                 </div>
 
                                 <div className="flex flex-col items-center text-xs text-gray-500">
-                                  <PlaneIcon className="w-5 h-5 text-gray-400" />
-                                  <p>{selectedBooking.details.duration || "2h 30m"}</p>
+                                  {getBookingIcon(selectedBooking.type)}
+                                  <p>{selectedBooking.details.duration}</p>
                                 </div>
 
                                 <div className="text-center">
-                                  <p className="text-lg font-bold">{"09:00 AM"}</p>
-                                  <p className="text-xs text-gray-500">Arrival</p>
+                                  <p className="text-lg font-bold">${selectedBooking.cost.toFixed(2)}</p>
+                                  <p className="text-xs text-gray-500">Cost</p>
                                 </div>
                               </div>
 
@@ -237,12 +401,19 @@ export const BookingDetails: React.FC = () => {
                                     <p>{selectedBooking.destination}</p>
                                   </div>
                                   <div>
-                                    <span className="text-gray-500">Date</span>
-                                    <p>{selectedBooking.date}</p>
-                                  </div>
-                                  <div>
-                                    <span className="text-gray-500">Cost</span>
-                                    <p className="font-medium">₹{selectedBooking.cost}</p>
+                                    <span className="text-gray-500">Details</span>
+                                    {selectedBooking.type === 'flight' && (
+                                      <>
+                                        <p>Airline: {selectedBooking.details.airline}</p>
+                                        <p>Flight: {selectedBooking.details.flightNumber}</p>
+                                      </>
+                                    )}
+                                    {selectedBooking.type === 'hotel' && (
+                                      <p>Hotel: {selectedBooking.details.hotelName}</p>
+                                    )}
+                                    {selectedBooking.type === 'taxi' && (
+                                      <p>Company: {selectedBooking.details.taxiCompany}</p>
+                                    )}
                                   </div>
                                 </div>
                               </div>
@@ -250,9 +421,7 @@ export const BookingDetails: React.FC = () => {
                           )}
                         </DialogContent>
                       </Dialog>
-                      <Button variant="outline" size="sm">
-                        <Download className="h-3 w-3" />
-                      </Button>
+                      {renderDownloadButton(booking)}
                     </div>
                   </td>
                 </tr>
@@ -291,7 +460,7 @@ export const BookingDetails: React.FC = () => {
                     </div>
                     <div>
                       <p className="text-gray-500 text-xs">Cost</p>
-                      <p className="font-medium">${booking.cost}</p>
+                      <p className="font-medium">${booking.cost.toFixed(2)}</p>
                     </div>
                   </div>
                   <div className="flex justify-end gap-2 mt-4">
@@ -320,30 +489,38 @@ export const BookingDetails: React.FC = () => {
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-3">
                                 <div className="bg-muted p-2 rounded-full">
-                                  <PlaneIcon className="w-6 h-6 text-primary" />
+                                  {getBookingIcon(selectedBooking.type)}
                                 </div>
                                 <div>
-                                  <p className="font-semibold">{selectedBooking.details.airline || "Airline"}</p>
-                                  <p className="text-sm text-gray-500">{selectedBooking.details.flightNumber || "Flight Number"}</p>
+                                  <p className="font-semibold">
+                                    {selectedBooking.type === 'flight' && selectedBooking.details.airline}
+                                    {selectedBooking.type === 'hotel' && selectedBooking.details.hotelName}
+                                    {selectedBooking.type === 'taxi' && selectedBooking.details.taxiCompany}
+                                  </p>
+                                  {selectedBooking.type === 'flight' && (
+                                    <p className="text-sm text-gray-500">{selectedBooking.details.flightNumber}</p>
+                                  )}
                                 </div>
                               </div>
-                              <Badge className="bg-green-100 text-green-700 text-sm">Direct</Badge>
+                              <Badge className={getStatusColor(selectedBooking.status)}>
+                                {selectedBooking.status}
+                              </Badge>
                             </div>
 
                             <div className="flex items-center justify-between px-2">
                               <div className="text-center">
-                                <p className="text-lg font-bold">{"06:30 AM"}</p>
-                                <p className="text-xs text-gray-500">Departure</p>
+                                <p className="text-lg font-bold">{selectedBooking.date}</p>
+                                <p className="text-xs text-gray-500">Date</p>
                               </div>
 
                               <div className="flex flex-col items-center text-xs text-gray-500">
-                                <PlaneIcon className="w-5 h-5 text-gray-400" />
-                                <p>{selectedBooking.details.duration || "2h 30m"}</p>
+                                {getBookingIcon(selectedBooking.type)}
+                                <p>{selectedBooking.details.duration}</p>
                               </div>
 
                               <div className="text-center">
-                                <p className="text-lg font-bold">{"09:00 AM"}</p>
-                                <p className="text-xs text-gray-500">Arrival</p>
+                                <p className="text-lg font-bold">${selectedBooking.cost.toFixed(2)}</p>
+                                <p className="text-xs text-gray-500">Cost</p>
                               </div>
                             </div>
 
@@ -372,12 +549,19 @@ export const BookingDetails: React.FC = () => {
                                   <p>{selectedBooking.destination}</p>
                                 </div>
                                 <div>
-                                  <span className="text-gray-500">Date</span>
-                                  <p>{selectedBooking.date}</p>
-                                </div>
-                                <div>
-                                  <span className="text-gray-500">Cost</span>
-                                  <p className="font-medium">₹{selectedBooking.cost}</p>
+                                  <span className="text-gray-500">Details</span>
+                                  {selectedBooking.type === 'flight' && (
+                                    <>
+                                      <p>Airline: {selectedBooking.details.airline}</p>
+                                      <p>Flight: {selectedBooking.details.flightNumber}</p>
+                                    </>
+                                  )}
+                                  {selectedBooking.type === 'hotel' && (
+                                    <p>Hotel: {selectedBooking.details.hotelName}</p>
+                                  )}
+                                  {selectedBooking.type === 'taxi' && (
+                                    <p>Company: {selectedBooking.details.taxiCompany}</p>
+                                  )}
                                 </div>
                               </div>
                             </div>
@@ -385,11 +569,7 @@ export const BookingDetails: React.FC = () => {
                         )}
                       </DialogContent>
                     </Dialog>
-                    <Button variant="outline" size="sm">
-                      <Download className="h-3 w-3 mr-1" />
-                      <span className="sr-only">Download</span>
-                      <span className="md:hidden">Download</span>
-                    </Button>
+                    {renderDownloadButton(booking)}
                   </div>
                 </CardContent>
               </Card>
