@@ -57,7 +57,7 @@ const selectedCab = storedCab ? JSON.parse(storedCab) : {
   return (
     <>
       <Header username='Employee' />
-      <div className="mt-8 w-full max-w-5xl mx-auto">
+      <div className="mt-8 w-full max-w-5xl mx-auto p-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Review & Checkout</h2>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -211,11 +211,11 @@ const selectedCab = storedCab ? JSON.parse(storedCab) : {
                   <span className="text-gray-600">Hotel</span>
                   <span className="font-medium">₹{selectedHotel.price}</span>
                 </div>
-             
+               {storedCab && (
                   <div className="flex justify-between">
                     <span className="text-gray-600">Transportation</span>
                     <span className="font-medium">₹{selectedCab.price}</span>
-                  </div>
+                  </div>)}
                
                 <div className="border-t border-gray-200 pt-3 mt-3">
                   <div className="flex justify-between">

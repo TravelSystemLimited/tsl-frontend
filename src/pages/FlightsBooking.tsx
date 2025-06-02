@@ -7,56 +7,6 @@ import Header from '@/components/ui/header';
 import FlightCard from '@/components/flightDetails';
 import TravelProgressBar from '@/components/travelProgressbar';
 
-const mockFlights = [
-  {
-    airline: 'Air Arabia',
-    from: 'Bengaluru',
-    to: 'Dubai',
-    departureTime: '15:25',
-    arrivalTime: '21:15',
-    departureDate: '14 Aug',
-    arrivalDate: '14 Aug',
-    price: 26440,
-    flightType: 'Direct Flight',
-    travelClass: 'Economy',
-  },
-  {
-    airline: 'Air Arabia',
-    from: 'Bengaluru',
-    to: 'Dubai',
-    departureTime: '15:55',
-    arrivalTime: '22:15',
-    departureDate: '14 Aug',
-    arrivalDate: '14 Aug',
-    price: 19478,
-    flightType: 'Direct Flight',
-    travelClass: 'Economy',
-  },
-  {
-    airline: 'Air Arabia',
-    from: 'Bengaluru',
-    to: 'Dubai',
-    departureTime: '16:23',
-    arrivalTime: '20:15',
-    departureDate: '14 Aug',
-    arrivalDate: '14 Aug',
-    price: 20540,
-    flightType: 'Direct Flight',
-    travelClass: 'Economy',
-  },
-  {
-    airline: 'Air Arabia',
-    from: 'Bengaluru',
-    to: 'Dubai',
-    departureTime: '17:25',
-    arrivalTime: '12:15',
-    departureDate: '14 Aug',
-    arrivalDate: '15 Aug',
-    price: 21247,
-    flightType: 'Direct Flight',
-    travelClass: 'Economy',
-  },
-];
 type PlaceOption = {
   label: string;
   value: {
@@ -68,8 +18,23 @@ type PlaceOption = {
     };
   };
 };
+
+type Flight = {
+  airline: string;
+  from: string;
+  to: string;
+  departureTime: string;
+  arrivalTime: string;
+  departureDate: string | null;
+  arrivalDate: string | null;
+  price: number;
+  flightType: string;
+  travelClass: string;
+};
+
 const FlightBooking = () => {
   const [hasSearched, setHasSearched] = useState(false);
+  const [flights, setFlights] = useState<Flight[]>([]);
   const [searchParams, setSearchParams] = useState({
     from: '',
     to: '',
@@ -77,11 +42,70 @@ const FlightBooking = () => {
     returnDate: null as Date | null,
     flightClass: 'Economy',
   });
-  useEffect(()=>{
+
+  useEffect(() => {
+    // Clear other selections
     sessionStorage.removeItem('selectedCab');
     sessionStorage.removeItem('selectedFlight');
     sessionStorage.removeItem('selectedHotel');
-  },[])
+
+    // Initialize flights with current sessionStorage values
+    const from = sessionStorage.getItem('source') || '';
+    const to = sessionStorage.getItem('destination') || '';
+    const departureDate = sessionStorage.getItem('departureDate');
+    const returnDate = sessionStorage.getItem('returnDate');
+
+    setFlights([
+      {
+        airline: 'Air Arabia',
+        from: from,
+        to: to,
+        departureTime: '15:25',
+        arrivalTime: '21:15',
+        departureDate: departureDate,
+        arrivalDate: returnDate,
+        price: 26440,
+        flightType: 'Direct Flight',
+        travelClass: 'Economy',
+      },
+      {
+        airline: 'Air Arabia',
+        from: from,
+        to: to,
+        departureTime: '15:55',
+        arrivalTime: '22:15',
+        departureDate: departureDate,
+        arrivalDate: returnDate,
+        price: 19478,
+        flightType: 'Direct Flight',
+        travelClass: 'Economy',
+      },
+      {
+        airline: 'Air Arabia',
+        from: from,
+        to: to,
+        departureTime: '16:23',
+        arrivalTime: '20:15',
+        departureDate: departureDate,
+        arrivalDate: returnDate,
+        price: 20540,
+        flightType: 'Direct Flight',
+        travelClass: 'Economy',
+      },
+      {
+        airline: 'Air Arabia',
+        from: 'Bengaluru',
+        to: 'Dubai',
+        departureTime: '17:25',
+        arrivalTime: '12:15',
+        departureDate: '14 Aug',
+        arrivalDate: '15 Aug',
+        price: 21247,
+        flightType: 'Direct Flight',
+        travelClass: 'Economy',
+      },
+    ]);
+  }, []);
 
   const handleSearch = (params: {
     source: PlaceOption | null;
@@ -98,26 +122,84 @@ const FlightBooking = () => {
       returnDate: params.returnDate,
       flightClass: params.flightClass,
     });
+
+    // Update flights with new search parameters
+    const from = params.source?.value.structured_formatting.main_text || '';
+    const to = params.destination?.value.structured_formatting.main_text || '';
+    const departureDate = params.departDate?.toLocaleDateString() || null;
+    const returnDate = params.returnDate?.toLocaleDateString() || null;
+
+    setFlights([
+      {
+        airline: 'Air Arabia',
+        from: from,
+        to: to,
+        departureTime: '15:25',
+        arrivalTime: '21:15',
+        departureDate: departureDate,
+        arrivalDate: returnDate,
+        price: 26440,
+        flightType: 'Direct Flight',
+        travelClass: params.flightClass,
+      },
+      {
+        airline: 'Air Arabia',
+        from: from,
+        to: to,
+        departureTime: '15:55',
+        arrivalTime: '22:15',
+        departureDate: departureDate,
+        arrivalDate: returnDate,
+        price: 19478,
+        flightType: 'Direct Flight',
+        travelClass: params.flightClass,
+      },
+      {
+        airline: 'Air Arabia',
+        from: from,
+        to: to,
+        departureTime: '16:23',
+        arrivalTime: '20:15',
+        departureDate: departureDate,
+        arrivalDate: returnDate,
+        price: 20540,
+        flightType: 'Direct Flight',
+        travelClass: params.flightClass,
+      },
+      {
+        airline: 'Air Arabia',
+        from: 'Bengaluru',
+        to: 'Dubai',
+        departureTime: '17:25',
+        arrivalTime: '12:15',
+        departureDate: '14 Aug',
+        arrivalDate: '15 Aug',
+        price: 21247,
+        flightType: 'Direct Flight',
+        travelClass: params.flightClass,
+      },
+    ]);
   };
+
 
   return (
     <div>
       {/* Header */}
-    
       <Header username="Employee" />
-        <TravelProgressBar currentStep="flights" />
+      
+      <TravelProgressBar currentStep="flights" />
 
       {/* Flight search bar */}
       <FlightSearchBar onSearch={handleSearch} />
 
-      {hasSearched ? (
+      {hasSearched || flights.some(flight => flight.from && flight.to) ? (
         /* Flight results */
         <div className="mt-8 pb-9">
           <h2 className="text-lg font-semibold mb-4 ml-4">
-            Flights from {searchParams.from} to {searchParams.to}
+            Flights from {searchParams.from || flights[0]?.from} to {searchParams.to || flights[0]?.to}
           </h2>
           <div className="grid gap-6 p-3 sm:grid-cols-2 lg:grid-cols-2 text-center">
-            {mockFlights.map((flight, index) => (
+            {flights.map((flight, index) => (
               <FlightCard key={index} {...flight} />
             ))}
           </div>

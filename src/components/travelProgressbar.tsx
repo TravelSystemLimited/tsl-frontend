@@ -55,7 +55,7 @@ const TravelProgressBar = ({ currentStep }: ProgressBarProps) => {
   };
 
   return (
-    <div className=" hidden sm:flex items-center justify-center mt-6 space-x-4">
+    <div className="flex items-center justify-center mt-6 space-x-4 mb-5">
       {steps.map((step, index) => (
         <div key={step.label} className="flex items-center">
           <div

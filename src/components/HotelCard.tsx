@@ -30,15 +30,15 @@ const HotelCard = ({ name, address, price, imageUrl }: HotelCardProps) => {
   };
 
   return (
-    <div className="flex w-full max-w-full bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+    <div className="flex flex-col md:flex-row w-full max-w-full bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
       <img
         src={imageUrl}
         alt={name}
         width={150}
         height={150}
-        className="w-1/3 object-cover h-full"
+        className=" w-full md:w-1/3 object-cover h-full"
       />
-      <div className="flex flex-col justify-between p-4 w-2/3 text-left">
+      <div className="flex flex-col justify-between p-4 w-full  md:w-2/3 text-left">
         <div>
           <h3 className="text-md font-semibold text-gray-800 mb-1">{name}</h3>
           <div className="flex items-start text-sm text-gray-600">
