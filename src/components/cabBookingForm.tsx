@@ -48,14 +48,40 @@ const formatDepartureDate = (dateStr: string): string => {
 
 useEffect(() => {
   if (parsedFlight && parsedHotel) {
-    const convertedDate = formatDepartureDate(parsedFlight.departureDate);
-const departdate=sessionStorage.getItem("departureDate")
     setFrom(parsedFlight.to);
     setTo(parsedHotel.name);
-    setPickupDate(departdate); // Now in dd-mm-yyyy fhormat
+
+    // Format the departure date to yyyy-mm-dd (HTML date input format)
+    const formatDateForInput = (dateStr: string) => {
+      try {
+        const [month, day, year] = dateStr.split('/').map(Number);
+        // Create a Date object in local time
+        const date = new Date(year, month - 1, day);
+        // Add one day (instead of adding 1 to the day component)
+        date.setDate(date.getDate() + 1);
+        
+        // Check if the date is valid
+        if (isNaN(date.getTime())) {
+          console.error('Invalid date created from:', dateStr);
+          return ''; // Return empty string or handle error appropriately
+        }
+        
+        // Get local date parts to avoid timezone issues
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        
+        return `${yyyy}-${mm}-${dd}`;
+      } catch (error) {
+        console.error('Error formatting date:', error);
+        return ''; // Return empty string or handle error appropriately
+      }
+    };
+
+    setPickupDate(formatDateForInput(parsedFlight.departureDate));
     setPickupTime(addOneHour(parsedFlight.arrivalTime));
   }
-}, []);
+}, [parsedFlight, parsedHotel]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

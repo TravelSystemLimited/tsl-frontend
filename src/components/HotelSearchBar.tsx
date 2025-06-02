@@ -1,7 +1,17 @@
 import { Search, Calendar, Users, MapPin } from 'lucide-react';
 import React, { useState } from 'react';
-
-const HotelSearchBar: React.FC = () => {
+interface HotelSearchParams {
+  location: string;
+  checkIn: Date | null;
+  checkOut: Date | null;
+  hotelClass: string;
+  guests: number;
+  rooms: number;
+}
+interface HotelSearchBarProps {
+  onSearch: (searchParams: HotelSearchParams) => void;
+}
+const HotelSearchBar: React.FC<HotelSearchBarProps> = ({ onSearch }) => {
   const [location, setLocation] = useState<string>('');
   const [checkIn, setCheckIn] = useState<Date | null>(null);
   const [checkOut, setCheckOut] = useState<Date | null>(null);
@@ -28,15 +38,17 @@ const HotelSearchBar: React.FC = () => {
     setCheckOut(new Date(e.target.value));
   };
 
-  const handleSearch = () => {
-    console.log('Searching with:', {
+ const handleSearch = () => {
+    const searchParams = {
       location,
       checkIn,
       checkOut,
       hotelClass,
       guests,
       rooms
-    });
+    };
+    console.log('Searching with:', searchParams);
+    onSearch(searchParams); // Call the passed callback
   };
 
   return (
@@ -44,39 +56,12 @@ const HotelSearchBar: React.FC = () => {
       {/* Mobile Layout */}
       <div className="block md:hidden">
         {/* Header with Logo and Menu */}
-        <div className="flex items-center justify-between p-4 bg-white border-b border-gray-200">
-          <div className="flex items-center">
-            <div className="text-xl font-bold">
-              <span className="text-black">TRA</span>
-              <span className="text-red-500">V</span>
-              <span className="text-black">EL SYSTEMS</span>
-            </div>
-            <div className="ml-2 text-xs text-gray-500">LIMITED</div>
-          </div>
-          <button className="p-2">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="3" y1="6" x2="21" y2="6"/>
-              <line x1="3" y1="12" x2="21" y2="12"/>
-              <line x1="3" y1="18" x2="21" y2="18"/>
-            </svg>
-          </button>
-        </div>
+       
 
-        {/* Navigation Tabs */}
-        <div className="flex bg-white border-b border-gray-200">
-          <button className="flex-1 px-4 py-3 text-center text-gray-500 border-b-2 border-transparent">
-            Flights
-          </button>
-          <button className="flex-1 px-4 py-3 text-center text-gray-900 border-b-2 border-red-500 font-medium">
-            Hotels
-          </button>
-          <button className="flex-1 px-4 py-3 text-center text-gray-500 border-b-2 border-transparent">
-            Cabs
-          </button>
-        </div>
+      
 
         {/* Search Form */}
-        <div className="p-4 bg-gray-50 min-h-screen">
+        <div className="p-4 bg-gray-50 ">
           {/* Location Search */}
           <div className="mb-4">
             <div className="relative">
@@ -159,20 +144,7 @@ const HotelSearchBar: React.FC = () => {
           </button>
 
           {/* Find Hotels Section */}
-          <div className="mt-16 text-center">
-            <div className="w-24 h-24 mx-auto mb-4 opacity-20">
-              <svg viewBox="0 0 100 100" className="w-full h-full text-gray-300">
-                <rect x="20" y="30" width="60" height="40" fill="none" stroke="currentColor" strokeWidth="2"/>
-                <rect x="15" y="35" width="70" height="30" fill="none" stroke="currentColor" strokeWidth="2"/>
-                <rect x="10" y="40" width="80" height="20" fill="none" stroke="currentColor" strokeWidth="2"/>
-                <circle cx="30" cy="50" r="2" fill="currentColor"/>
-                <circle cx="40" cy="50" r="2" fill="currentColor"/>
-                <circle cx="60" cy="50" r="2" fill="currentColor"/>
-                <circle cx="70" cy="50" r="2" fill="currentColor"/>
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-gray-400 mb-2">Find Hotels</h3>
-          </div>
+        
         </div>
       </div>
 

@@ -95,7 +95,7 @@ const FlightCard = ({
           <MdFlightLand className="w-5 h-5 text-gray-500  mb-1"/>
         </div>
 
-        {/* To */}a
+        {/* To */}
         <div className="text-right">
           <p className="text-lg font-semibold">{arrivalTime}</p>
           <p className="text-xs text-gray-600">{arrivalDate}</p>
