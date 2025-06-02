@@ -22,6 +22,7 @@ import Employees from "./pages/Employees";
 
 
 import { ThemeProvider } from "./context/ThemeContext";
+// import ModifyBooking from "./pages/ModifyBooking";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -31,36 +32,16 @@ const App = () => {
         <ThemeProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/tsl" element={<LoginPage />} />
-              <Route path="/s2c" element={<LoginPage />} />
-              <Route path="/" element={<LoginPage />} />
-              <Route path="/manager" element={<Index />} />
-              <Route path="/employee" element={<FlightBooking />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/cabs" element={<CabBooking />} />
-              <Route path="/hotels" element={<HotelBooking />} />
-              <Route path="/flights" element={<Flights />} />
-              <Route path="/dashboard" element={<DashboardLayout />}>
-                <Route index element={<Dashboard />} />
-                <Route path="requests" element={<Requests />} />
-                <Route path="analytics" element={<Analytics />} />
-                <Route path="history" element={<History />} />
-                <Route path="bookings" element={<Bookings />} />
-              </Route>
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
+          
         </ThemeProvider>
-        <Toaster />
-        <Sonner />
+        
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<LoginPage />} />
             <Route path="/manager" element={<Index />} />
             <Route path="/employee" element={<FlightBooking/>} />
             <Route path="/checkout" element={  <Checkout/>} />
+                 {/* <Route path="modify-booking" element={<ModifyBooking />} /> */}
 
             <Route path="/cabs" element={<CabBooking/>} />
             <Route path="/hotels" element={<HotelBooking />} />
@@ -71,6 +52,8 @@ const App = () => {
               <Route path="analytics" element={<Analytics />} />
               <Route path="history" element={<History />} />
               <Route path="employees" element={<Employees />} />
+         
+              
 
     
               <Route path="bookings" element={<Bookings />} />
