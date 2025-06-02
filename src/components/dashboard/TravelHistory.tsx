@@ -115,7 +115,7 @@ export const TravelHistory: React.FC = () => {
   return (
     <Card className="bg-white border-none shadow-md">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-[#3b3b3b]">
+        <CardTitle className="flex items-center text-1xl md:text-2xl gap-2 text-[#3b3b3b]">
           <Calendar className="h-5 w-5" />
           Travel History
         </CardTitle>
@@ -147,37 +147,43 @@ export const TravelHistory: React.FC = () => {
           </Select>
         </div>
 
-        {/* Travel Records */}
         <div className="space-y-4">
-          {filteredHistory.map((record) => (
-            <div
-              key={record.id}
-              className="flex flex-col md:flex-row md:items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors gap-4"
-            >
-              <div className="flex items-center gap-4 flex-1 min-w-0">
-                <div className="p-2 bg-[#8C6D73] bg-opacity-10 rounded-full flex-shrink-0">
-                  <User className="h-4 w-4 text-[#8C6D73]" />
-                </div>
-                <div className="min-w-0">
-                  <h4 className="font-medium text-gray-900 truncate">{record.employeeName}</h4>
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <MapPin className="h-3 w-3 flex-shrink-0" />
-                    <span className="truncate">{record.destination}</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col md:items-end gap-2">
-                <Badge className={`${getStatusColor(record.status)} w-fit`}>
-                  {record.status}
-                </Badge>
-                <p className="text-sm text-gray-500">
-                  {record.departureDate} - {record.returnDate}
-                </p>
-                <p className="font-medium text-gray-900">${record.cost}</p>
-              </div>
-            </div>
-          ))}
+  {filteredHistory.map((record) => (
+    <div
+      key={record.id}
+      className="relative p-2 border border-gray-200 rounded-2xl shadow-sm bg-white flex flex-col gap-3"
+    >
+      {/* Status Badge */}
+      <div className="absolute top-3 right-3">
+        <span className={`text-xs px-2 py-0.5  rounded-full font-medium ${getStatusColor(record.status)}`}>
+          {record.status}
+        </span>
+      </div>
+
+      {/* User Info */}
+      <div className="flex items-center gap-4">
+        <div className="p-3 bg-[#8C6D73]/10 rounded-full">
+          <User className="h-6 w-6 text-[#8C6D73]" />
         </div>
+        <div>
+          <h4 className="text-[14px] font-semibold text-black leading-none">{record.employeeName}</h4>
+          <p className="text-sm text-[#8C6D73] mt-1">{record.destination}</p>
+        </div>
+      </div>
+
+      {/* Date Range */}
+      <p className="text-sm text-black text-center">
+        {record.departureDate} - {record.returnDate}
+      </p>
+
+      {/* Cost */}
+      <div className="flex justify-end">
+        <p className="text-1xl md:text- font-bold text-[#8C6D73]">₹{record.cost}</p>
+      </div>
+    </div>
+  ))}
+</div>
+
 
         {filteredHistory.length === 0 && (
           <div className="text-center py-8">

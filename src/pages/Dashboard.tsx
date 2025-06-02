@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 const Dashboard = () => {
   // Mock data for demonstration
   const stats = {
-    totalSpending: 1254000,
+    totalSpending: 154000,
     pendingRequests: 8,
     upcomingTrips: 12,
     totalEmployees: 45
@@ -23,94 +23,90 @@ const Dashboard = () => {
           <div className="flex items-center gap-4">
             <SidebarTrigger className="text-[#3b3b3b] block md:hidden" />
             <div>
-              <h1 className="text-3xl font-bold text-[#3b3b3b]">Dashboard Overview</h1>
+              <h1 className="text-2xl md:text-2xl font-bold text-[#3b3b3b]">Dashboard Overview</h1>
               <p className="text-gray-600 mt-1">Welcome back, Manager. Here's your travel management overview.</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 text-[#8C6D73] bg-white px-4 py-2 rounded-lg shadow-sm">
-            <IndianRupee className="h-5 w-5" />
-            <span className="font-medium">INR</span>
-          </div>
+          
         </div>
+{/* Hero Image Banner */}
+<Card className="bg-[#e5e5e5] border-none overflow-hidden">
+  <CardContent className="p-8">
+    <div className="flex flex-col md:flex-row items-center justify-between">
+      <div className="text-[#3b3b3b] mb-4 md:mb-0 order-1 md:order-none">
+        <h2 className="text-1xl md:text-2xl font-bold mb-2">Streamline Your Corporate Travel</h2>
+        <p className="text-[#3b3b3b] text-[14px] md:text-[18px] mb-4">Manage bookings, track expenses, and approve requests efficiently</p>
+        <Link to="/dashboard/requests">
+          <Button variant="secondary" className="bg-[#8c6d73] text-[#fff] hover:bg-gray-100">
+            View Pending Requests
+          </Button>
+        </Link>
+      </div>
+      <div className="order-2 md:order-none">
+        <img 
+          src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&h=200&fit=crop" 
+          alt="Business Travel"
+          className="rounded-lg shadow-lg w-full md:w-64 h-32 object-cover"
+        />
+      </div>
+    </div>
+  </CardContent>
+</Card>
 
-        {/* Hero Image Banner */}
-        <Card className="bg-[#e5e5e5] border-none  overflow-hidden">
-          <CardContent className="p-8">
-            <div className="flex items-center justify-between">
-              <div className="text-[#3b3b3b]">
-                <h2 className="text-2xl font-bold mb-2">Streamline Your Corporate Travel</h2>
-                <p className="text-[#3b3b3b] mb-4">Manage bookings, track expenses, and approve requests efficiently</p>
-                <Link to="/dashboard/requests">
-                  <Button variant="secondary" className="bg-[#8c6d73] text-[#fff] hover:bg-gray-100">
-                    View Pending Requests
-                  </Button>
-                </Link>
-              </div>
-              <div className="hidden md:block">
-                <img 
-                  src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&h=200&fit=crop" 
-                  alt="Business Travel"
-                  className="rounded-lg shadow-lg w-64 h-32 object-cover"
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Stats Cards */}
+<div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+  <Link to="/dashboard/analytics">
+    <Card className="bg-white border-none shadow-md hover:shadow-lg transition-all hover:scale-105 cursor-pointer min-h-[140px] md:min-h-0" data-type="spending">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm  font-medium text-gray-600">Total Spending</CardTitle>
+        <IndianRupee className="h-4 w-4 text-[#8C6D73]" />
+      </CardHeader>
+      <CardContent>
+        <div className="text-1xl font-bold text-[#636363]">₹{stats.totalSpending.toLocaleString()}</div>
+        <p className="text-xs text-[#636363]">+12% from last month</p>
+      </CardContent>
+    </Card>
+  </Link>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Link to="/dashboard/analytics">
-            <Card className="bg-white border-none shadow-md hover:shadow-lg transition-all hover:scale-105 cursor-pointer">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">Total Spending</CardTitle>
-                <IndianRupee className="h-4 w-4 text-[#8C6D73]" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-[#636363]">₹{stats.totalSpending.toLocaleString()}</div>
-                <p className="text-xs text-green-600">+12% from last month</p>
-              </CardContent>
-            </Card>
-          </Link>
+  <Link to="/dashboard/requests">
+    <Card className="bg-white border-none shadow-md hover:shadow-lg transition-all hover:scale-105 cursor-pointer min-h-[140px] md:min-h-0" data-type="pending">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium text-gray-600">Pending Requests</CardTitle>
+        <AlertTriangle className="h-4 w-4 text-[#636363]" />
+      </CardHeader>
+      <CardContent>
+        <div className="text-1xl font-bold text-[#636363]">{stats.pendingRequests}</div>
+        <p className="text-xs text-gray-500">Awaiting approval</p>
+      </CardContent>
+    </Card>
+  </Link>
 
-          <Link to="/dashboard/requests">
-            <Card className="bg-white border-none shadow-md hover:shadow-lg transition-all hover:scale-105 cursor-pointer">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">Pending Requests</CardTitle>
-                <AlertTriangle className="h-4 w-4 text-orange-500" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-orange-500">{stats.pendingRequests}</div>
-                <p className="text-xs text-gray-500">Awaiting approval</p>
-              </CardContent>
-            </Card>
-          </Link>
+  <Link to="/dashboard/history">
+    <Card className="bg-white border-none shadow-md hover:shadow-lg transition-all hover:scale-105 cursor-pointer min-h-[140px] md:min-h-0" data-type="trips">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium text-gray-600">Upcoming Trips</CardTitle>
+        <Plane className="h-4 w-4 text-[#636363]" />
+      </CardHeader>
+      <CardContent>
+        <div className="text-1xl font-bold text-blue-500">{stats.upcomingTrips}</div>
+        <p className="text-xs text-gray-500">Next 30 days</p>
+      </CardContent>
+    </Card>
+  </Link>
 
-          <Link to="/dashboard/history">
-            <Card className="bg-white border-none shadow-md hover:shadow-lg transition-all hover:scale-105 cursor-pointer">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">Upcoming Trips</CardTitle>
-                <Plane className="h-4 w-4 text-blue-500" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-blue-500">{stats.upcomingTrips}</div>
-                <p className="text-xs text-gray-500">Next 30 days</p>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Link to="/dashboard/employees">
-            <Card className="bg-white border-none shadow-md hover:shadow-lg transition-all hover:scale-105 cursor-pointer">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">Active Employees</CardTitle>
-                <Users className="h-4 w-4 text-green-500" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-green-500">{stats.totalEmployees}</div>
-                <p className="text-xs text-gray-500">Travel authorized</p>
-              </CardContent>
-            </Card>
-          </Link>
-        </div>
+  <Link to="/dashboard/employees">
+    <Card className="bg-white border-none shadow-md hover:shadow-lg transition-all hover:scale-105 cursor-pointer min-h-[140px] md:min-h-0" data-type="employees">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium text-gray-600">Active Employees</CardTitle>
+        <Users className="h-4 w-4 text-green-500" />
+      </CardHeader>
+      <CardContent>
+        <div className="text-1xl font-bold text-green-500">{stats.totalEmployees}</div>
+        <p className="text-xs text-gray-500">Travel authorized</p>
+      </CardContent>
+    </Card>
+  </Link>
+</div>
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

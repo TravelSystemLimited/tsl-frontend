@@ -6,7 +6,7 @@ import { AppSidebar } from "./components/AppSidebar";
 export function DashboardLayout() {
   return (
     <SidebarProvider>
-      <div className="flex flex-col h-screen">
+      <div className="flex flex-col">
         {/* Fixed Header at the top */}
         <div className="fixed top-0 left-0 right-0 z-50">
           <Header username="Manager Name" />
