@@ -1,5 +1,6 @@
 import { Search, Calendar, Users, MapPin } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
 interface HotelSearchParams {
   location: string;
   checkIn: Date | null;
@@ -8,9 +9,11 @@ interface HotelSearchParams {
   guests: number;
   rooms: number;
 }
+
 interface HotelSearchBarProps {
   onSearch: (searchParams: HotelSearchParams) => void;
 }
+
 const HotelSearchBar: React.FC<HotelSearchBarProps> = ({ onSearch }) => {
   const [location, setLocation] = useState<string>('');
   const [checkIn, setCheckIn] = useState<Date | null>(null);
@@ -18,6 +21,39 @@ const HotelSearchBar: React.FC<HotelSearchBarProps> = ({ onSearch }) => {
   const [hotelClass, setHotelClass] = useState<string>('All');
   const [guests, setGuests] = useState<number>(1);
   const [rooms, setRooms] = useState<number>(1);
+const parseMMDDYYYY = (str: string): Date => {
+  const [month, day, year] = str.split('/').map(Number);
+  return new Date(year, month - 1, day+1); // JS months are 0-indexed
+};
+  useEffect(() => {
+    // Load flight data from sessionStorage when component mounts
+    const flightData = sessionStorage.getItem('selectedFlight');
+    if (flightData) {
+      try {
+        const flight = JSON.parse(flightData);
+        if (flight.to) {
+          setLocation(flight.to);
+        }
+        if (flight.departureDate) {
+        
+         setCheckIn(parseMMDDYYYY(flight.departureDate));
+        }
+        if (flight.arrivalDate) {
+           setCheckOut(parseMMDDYYYY(flight.arrivalDate));
+        }
+      } catch (error) {
+        console.error('Error parsing flight data:', error);
+      }
+    }
+  }, []);
+  const formatDateForDisplay = (date: Date | null) => {
+    if (!date) return '';
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
 
   const formatDateForInput = (date: Date | null) => {
     if (!date) return '';
@@ -34,11 +70,11 @@ const HotelSearchBar: React.FC<HotelSearchBarProps> = ({ onSearch }) => {
     }
   };
 
-  const handleCheckOutChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+ const handleCheckOutChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCheckOut(new Date(e.target.value));
   };
 
- const handleSearch = () => {
+  const handleSearch = () => {
     const searchParams = {
       location,
       checkIn,
@@ -48,18 +84,15 @@ const HotelSearchBar: React.FC<HotelSearchBarProps> = ({ onSearch }) => {
       rooms
     };
     console.log('Searching with:', searchParams);
-    onSearch(searchParams); // Call the passed callback
+    onSearch(searchParams);
   };
 
+  // Rest of your component remains the same...
   return (
     <div className="w-full">
       {/* Mobile Layout */}
       <div className="block md:hidden">
         {/* Header with Logo and Menu */}
-       
-
-      
-
         {/* Search Form */}
         <div className="p-4 bg-gray-50 ">
           {/* Location Search */}
@@ -77,37 +110,33 @@ const HotelSearchBar: React.FC<HotelSearchBarProps> = ({ onSearch }) => {
           </div>
 
           {/* Check-in and Check-out */}
-          <div className="flex gap-3 mb-4">
+          <div className="flex gap-2 mb-4 w-full">
         <div className="flex-1">
           <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
-            <input
-              type="date"
-              value={formatDateForInput(checkIn)}
-              onChange={handleCheckInChange}
-              min={formatDateForInput(new Date())}
-              className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent date-input-custom"
-              style={{
-                colorScheme: 'light'
-              }}
-            />
-            <div className="absolute top-2 left-10 text-xs text-gray-500 pointer-events-none">Check-In</div>
+         
+           <input
+                  type="date"
+                  value={formatDateForInput(checkIn)}
+                  onChange={handleCheckInChange}
+                  min={formatDateForInput(new Date())}
+                  placeholder="Select date"
+                  className="w-full pl-2  py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+          
           </div>
         </div>
         <div className="flex-1">
           <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
-            <input
-              type="date"
-              value={formatDateForInput(checkOut)}
-              onChange={handleCheckOutChange}
-              min={formatDateForInput(checkIn) || formatDateForInput(new Date())}
-              className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent date-input-custom"
-              style={{
-                colorScheme: 'light'
-              }}
-            />
-            <div className="absolute top-2 left-10 text-xs text-gray-500 pointer-events-none">Check-Out</div>
+        
+             <input
+                  type="date"
+                  value={formatDateForInput(checkOut)}
+                  onChange={handleCheckOutChange}
+                  min={formatDateForInput(checkIn) || formatDateForInput(new Date())}
+                  placeholder="Select date"
+                  className="w-full pl-2  py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+
           </div>
         </div>
       </div>

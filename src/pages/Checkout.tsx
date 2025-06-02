@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Checkout: React.FC = () => {
   const navigate=useNavigate();
+    const [showConfirmation, setShowConfirmation] = useState(false);
   // Hardcoded flight data
   const storedFlight = sessionStorage.getItem('selectedFlight');
   const selectedFlight = storedFlight ? JSON.parse(storedFlight) : {
@@ -15,7 +16,9 @@ const Checkout: React.FC = () => {
     arrivalTime: "11:15 AM",
     price: 2500
   };
-
+  const navigateToHome = () => {
+    navigate('/');
+  };
   // Hardcoded hotel data
   const storedHotel = sessionStorage.getItem('selectedHotel');
 const selectedHotel = storedHotel ? JSON.parse(storedHotel) : {
@@ -46,7 +49,7 @@ const selectedCab = storedCab ? JSON.parse(storedCab) : {
   const totalPrice = selectedFlight.price + selectedHotel.price +  selectedCab.price ;
 
   const onCompleteBooking = () => {
-    alert("Booking completed successfully!");
+   setShowConfirmation(true);
     // Here you would typically redirect to a confirmation page or similar
   };
 
@@ -198,7 +201,7 @@ const selectedCab = storedCab ? JSON.parse(storedCab) : {
 
           </div>
           
-          <div className="col-span-1">
+                <div className="col-span-1">
             <div className="bg-white rounded-lg shadow-md p-6 sticky top-6">
               <h3 className="text-lg font-bold text-gray-800 mb-4">Booking Summary</h3>
               
@@ -211,11 +214,12 @@ const selectedCab = storedCab ? JSON.parse(storedCab) : {
                   <span className="text-gray-600">Hotel</span>
                   <span className="font-medium">₹{selectedHotel.price}</span>
                 </div>
-               {storedCab && (
+                {storedCab && (
                   <div className="flex justify-between">
                     <span className="text-gray-600">Transportation</span>
                     <span className="font-medium">₹{selectedCab.price}</span>
-                  </div>)}
+                  </div>
+                )}
                
                 <div className="border-t border-gray-200 pt-3 mt-3">
                   <div className="flex justify-between">
@@ -247,6 +251,27 @@ const selectedCab = storedCab ? JSON.parse(storedCab) : {
           </div>
         </div>
       </div>
+
+      {showConfirmation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
+            <div className="text-center">
+              <Check size={48} className="text-green-500 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-gray-800 mb-2">Booking Request Submitted</h3>
+              <p className="text-gray-600 mb-6">
+                Your booking request has been forwarded to the manager. 
+                You will receive a status update soon.
+              </p>
+              <button
+                onClick={navigateToHome}
+                className="w-full bg-[#8C6D73] text-white py-2 rounded-md font-medium hover:bg-[#7a5f64] transition-colors duration-200"
+              >
+                Go to Home
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

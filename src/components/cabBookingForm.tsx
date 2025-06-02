@@ -45,40 +45,25 @@ const formatDepartureDate = (dateStr: string): string => {
   const formattedDate = `${day.padStart(2, "0")}-${monthMap[monthShort]}-${year}`;
   return formattedDate;
 };
-
+const formatDateForInput = (date: string | Date | null) => {
+  if (!date) return '';
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  return dateObj.toISOString().split('T')[0];
+};
+const parseMMDDYYYY = (str: string): Date => {
+  const [month, day, year] = str.split('/').map(Number);
+  return new Date(year, month - 1, day+1); // JS months are 0-indexed
+};
 useEffect(() => {
   if (parsedFlight && parsedHotel) {
     setFrom(parsedFlight.to);
     setTo(parsedHotel.name);
 
     // Format the departure date to yyyy-mm-dd (HTML date input format)
-    const formatDateForInput = (dateStr: string) => {
-      try {
-        const [month, day, year] = dateStr.split('/').map(Number);
-        // Create a Date object in local time
-        const date = new Date(year, month - 1, day);
-        // Add one day (instead of adding 1 to the day component)
-        date.setDate(date.getDate() + 1);
-        
-        // Check if the date is valid
-        if (isNaN(date.getTime())) {
-          console.error('Invalid date created from:', dateStr);
-          return ''; // Return empty string or handle error appropriately
-        }
-        
-        // Get local date parts to avoid timezone issues
-        const yyyy = date.getFullYear();
-        const mm = String(date.getMonth() + 1).padStart(2, '0');
-        const dd = String(date.getDate()).padStart(2, '0');
-        
-        return `${yyyy}-${mm}-${dd}`;
-      } catch (error) {
-        console.error('Error formatting date:', error);
-        return ''; // Return empty string or handle error appropriately
-      }
-    };
+  
 
-    setPickupDate(formatDateForInput(parsedFlight.departureDate));
+   setPickupDate(formatDateForInput(parseMMDDYYYY(parsedFlight.departureDate)));
+
     setPickupTime(addOneHour(parsedFlight.arrivalTime));
   }
 }, [parsedFlight, parsedHotel]);
