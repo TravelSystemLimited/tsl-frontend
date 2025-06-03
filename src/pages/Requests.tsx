@@ -77,7 +77,7 @@ const Requests = () => {
 
         {/* Pending Requests Section */}
         <div className="bg-white rounded-lg shadow-sm p-[0px] md:p-6">
-          <div className="mb-6">
+          <div className="mb-6 p-6">
             <h2 className="text-xl font-semibold text-[#8C6D73] mb-2">Request Management</h2>
             <p className="text-gray-600">Review pending travel requests and make approval decisions</p>
           </div>

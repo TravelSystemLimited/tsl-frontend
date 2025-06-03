@@ -1,11 +1,18 @@
-'use client';
-
 import React, { useEffect, useState } from 'react';
 import { MdOutlineFlight } from 'react-icons/md';
 import FlightSearchBar from '@/components/FlightSearchBar';
 import Header from '@/components/ui/header';
 import FlightCard from '@/components/flightDetails';
 import TravelProgressBar from '@/components/travelProgressbar';
+import { useLocation } from 'react-router-dom';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { SidebarTrigger } from '@/components/ui/sidebar';
 
 type PlaceOption = {
   label: string;
@@ -31,6 +38,7 @@ type Flight = {
   flightType: string;
   travelClass: string;
 };
+
 const mockEmployees = [
   { id: 1, name: 'John Doe', email: 'john@example.com' },
   { id: 2, name: 'Jane Smith', email: 'jane@example.com' },
@@ -39,6 +47,9 @@ const mockEmployees = [
 ];
 
 const FlightBooking = () => {
+  const location = useLocation();
+  const isEmployeeBookingRoute = location.pathname.includes('employee-booking');
+  const [selectedEmployee, setSelectedEmployee] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
   const [flights, setFlights] = useState<Flight[]>([]);
   const [searchParams, setSearchParams] = useState({
@@ -48,7 +59,6 @@ const FlightBooking = () => {
     returnDate: null as Date | null,
     flightClass: 'Economy',
   });
-  
 
   useEffect(() => {
     // Clear other selections
@@ -113,7 +123,43 @@ const FlightBooking = () => {
       },
     ]);
   }, []);
+  // Add this to your main component
+useEffect(() => {
+  const logStorageChanges = (e: StorageEvent) => {
+    if (e.key === 'selectedEmployee') {
+      console.log('Storage changed:', {
+        oldValue: e.oldValue,
+        newValue: e.newValue,
+        url: e.url,
+      });
+    }
+  };
+  window.addEventListener('storage', logStorageChanges);
+  return () => window.removeEventListener('storage', logStorageChanges);
+}, []);
 
+const handleEmployeeChange = (value: string) => {
+  console.log('Selected value:', value);
+  const employee = mockEmployees.find(emp => emp.id.toString() === value);
+  
+  if (employee) {
+    const storageData = {
+      id: employee.id,
+      name: employee.name,
+      email: employee.email,
+      timestamp: Date.now() // Add unique identifier
+    };
+    
+    console.log('Storing:', storageData);
+    sessionStorage.setItem('selectedEmployee', JSON.stringify(storageData));
+    
+    // Verify immediately
+    const stored = sessionStorage.getItem('selectedEmployee');
+    console.log('Verified stored:', stored);
+    
+    setSelectedEmployee(value);
+  }
+};
   const handleSearch = (params: {
     source: PlaceOption | null;
     destination: PlaceOption | null;
@@ -121,7 +167,7 @@ const FlightBooking = () => {
     returnDate: Date | null;
     flightClass: string;
   }) => {
-      if (!params.source || !params.destination || !params.departDate) return;
+    if (!params.source || !params.destination || !params.departDate) return;
     setHasSearched(true);
     
     setSearchParams({
@@ -193,15 +239,43 @@ const FlightBooking = () => {
 
   return (
     <div>
-      {/* Header */}
-      <Header username="Employee" />
+      {/* Header - only show if not on employee-booking route */}
+      {!isEmployeeBookingRoute && <Header username="Employee" />}
+      {isEmployeeBookingRoute && (
+        <div className="px-4 pt-4 pb-2"> {/* Adjusted padding */}
+          <div className="flex items-center gap-4">
+            <SidebarTrigger className="text-[#8C6D73] h-8 w-8" />
+            <div>
+              <h1 className="text-xl md:text-2xl font-bold text-[#3b3b3b]">Employee Flight Booking</h1>
+              <p className="text-gray-600 text-sm md:text-base">Book flights for employees</p>
+            </div>
+          </div>
+        </div>
+      )}
       
       <TravelProgressBar currentStep="flights" />
 
+      {/* Employee dropdown - only show on employee-booking route */}
+      {isEmployeeBookingRoute && (
+  <div className="px-4 pt-2 pb-1">
+    <Select onValueChange={handleEmployeeChange}>  {/* Use handleEmployeeChange here */}
+      <SelectTrigger className="w-[300px]">
+        <SelectValue placeholder="Select an employee" />
+      </SelectTrigger>
+      <SelectContent>
+        {mockEmployees.map((employee) => (
+          <SelectItem key={employee.id} value={employee.id.toString()}>
+            {employee.name}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  </div>
+)}
       {/* Flight search bar */}
       <FlightSearchBar onSearch={handleSearch} />
 
-      {hasSearched  ? (
+      {hasSearched ? (
         /* Flight results */
         <div className="mt-8 pb-9">
           <h2 className="text-sm md:text-lg text-gray-700 font-semibold mb-4 ml-4">

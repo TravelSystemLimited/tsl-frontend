@@ -13,6 +13,8 @@ import {
   SidebarHeader,
   SidebarFooter
 } from "@/components/ui/sidebar";
+import { IoPersonAddSharp } from 'react-icons/io5';
+import { IoIosAddCircle } from 'react-icons/io';
 
 const navigationItems = [
   {
@@ -24,6 +26,11 @@ const navigationItems = [
     title: "Pending Requests",
     url: "/dashboard/requests",
     icon: FileText,
+  },
+  {
+    title: "Add Employees & Policies",
+    url: "/dashboard/add",
+    icon: IoIosAddCircle ,
   },
   {
     title: "Analytics",
@@ -45,6 +52,11 @@ const navigationItems = [
     url: "/dashboard/bookings",
     icon: Plane,
   },
+  {
+    title: "Employee Booking",
+    url: "/dashboard/employee-booking",
+    icon:IoPersonAddSharp ,
+  }
 ];
 
 export function AppSidebar() {
