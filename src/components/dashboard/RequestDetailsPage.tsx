@@ -38,7 +38,13 @@ interface BookingDetails {
     pickupDate: string;
   };
 }
-
+interface BudgetInfo {
+  allocatedBudget: number;
+  tripsTaken: number;
+  tripsRemaining: number;
+  budgetUsed: number;
+  budgetRemaining: number;
+}
 interface PendingRequest {
   id: string;
   employeeName: string;
@@ -51,6 +57,7 @@ interface PendingRequest {
   priority: 'low' | 'medium' | 'high';
   details: string;
   bookingDetails: BookingDetails;
+
 }
 
 const RequestDetailsPage = () => {
@@ -65,7 +72,16 @@ const RequestDetailsPage = () => {
   const [showFlightAlternatives, setShowFlightAlternatives] = useState(false);
   const [showHotelAlternatives, setShowHotelAlternatives] = useState(false);
   const [showCabAlternatives, setShowCabAlternatives] = useState(false);
-
+  const totalamount=(currentRequest.bookingDetails?.flight?.price || 0) +
+                (currentRequest.bookingDetails?.hotel?.price || 0) +
+                (currentRequest.bookingDetails?.cab?.price || 0)
+const [budgetInfo, setBudgetInfo] = useState<BudgetInfo>({
+  allocatedBudget: 40000,
+  tripsTaken: 3,
+  tripsRemaining: 2,
+  budgetUsed:totalamount,
+  budgetRemaining: 40000-totalamount
+});
   useEffect(() => {
     if (currentRequest.bookingDetails.flight) {
       setAlternativeFlights([
@@ -267,9 +283,48 @@ const RequestDetailsPage = () => {
     <>
       <Header username='Manager Name' />
       <button className='p-4 border-none outline-none flex items-center' onClick={() => navigate(-1)}>  <ChevronLeft width={20} height={20} />  back</button>
+     
+<div className="container mx-auto px-4">
+   <h1 className="text-xl font-semibold mb-6 text-[#3b3b3b]">Budget Allocated</h1>
+  <div className="bg-white rounded-lg shadow p-3 mb-4 grid grid-cols-4 gap-2 items-center">
+    {/* Budget Progress */}
+    <div className="col-span-2">
+      <div className="flex justify-between text-xs mb-1">
+        <span className="text-gray-500">Budget</span>
+        <span className="font-medium">
+          ₹{budgetInfo.budgetUsed.toLocaleString()}<span className="text-gray-400">/</span>
+          ₹{budgetInfo.allocatedBudget.toLocaleString()}
+        </span>
+      </div>
+      <div className="w-full bg-gray-100 rounded-full h-1.5">
+        <div 
+          className="bg-[#8C6D73] h-1.5 rounded-full" 
+          style={{ width: `${Math.min(100, (budgetInfo.budgetUsed/budgetInfo.allocatedBudget)*100)}%` }}
+        ></div>
+      </div>
+    </div>
+
+    {/* Budget Remaining */}
+    <div className="flex flex-col items-center border-l border-gray-200 pl-2">
+      <span className="text-xs font-medium">₹{budgetInfo.budgetRemaining.toLocaleString()}</span>
+      <span className="text-xs text-gray-500">Remaining</span>
+    </div>
+
+    {/* Trip Information */}
+    <div className="flex flex-col items-end pl-2 border-l border-gray-200">
+      <div className="flex items-center gap-1">
+        <span className="text-xs text-gray-500">Trips:</span>
+        <span className="text-xs font-medium">{budgetInfo.tripsTaken}</span>
+        <span className="text-xs text-gray-400">/</span>
+        <span className="text-xs font-medium">{budgetInfo.tripsTaken + budgetInfo.tripsRemaining}</span>
+      </div>
+      <span className="text-xs text-gray-500">Left: {budgetInfo.tripsRemaining}</span>
+    </div>
+  </div>
+</div>
       <div className="container mx-auto p-4 ">
 
-        <h1 className="text-xl font-bold mb-6 text-[#3b3b3b]">Travel Request Details</h1>
+        <h1 className="text-xl font-semibold mb-6 text-[#3b3b3b]">Travel Request Details</h1>
 
         {/* Employee Info */}
         <div className="bg-white p-4 rounded-lg shadow mb-6">
