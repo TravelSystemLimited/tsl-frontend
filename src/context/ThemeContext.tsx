@@ -54,7 +54,7 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         } else if (url.includes('s2c')) {
             setCurrentTheme('s2c');
         } else {
-            setCurrentTheme('default');
+            setCurrentTheme('tsl');
         }
     }, []);
 
