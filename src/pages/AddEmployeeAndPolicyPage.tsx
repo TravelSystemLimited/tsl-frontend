@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import EmployeeForm from './AddEmpoyee';
 import PolicyForm from '@/components/PolicyForm';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import EmployeeForm from '@/components/EmployeeForm';
 
 
 const AddEmployeeAndPolicyPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'employee' | 'policy'>('employee');
+  const [activeTab, setActiveTab] = useState<'employee' | 'policy'>('policy');
 
   return (
     <div className=" mx-auto  mt-6">
