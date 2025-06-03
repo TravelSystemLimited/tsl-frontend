@@ -55,9 +55,13 @@ const parseMMDDYYYY = (str: string): Date => {
   return new Date(year, month - 1, day+1); // JS months are 0-indexed
 };
 useEffect(() => {
-  if (parsedFlight && parsedHotel) {
+  if (parsedFlight ) {
     setFrom(parsedFlight.to);
+    if(parsedHotel){
     setTo(parsedHotel.name);
+    }else{
+      setTo("Airport Bus stop")
+    }
 
     // Format the departure date to yyyy-mm-dd (HTML date input format)
   
@@ -78,6 +82,37 @@ useEffect(() => {
       onSubmit={handleSearch}
       className="w-full p-4 bg-white shadow-md rounded-lg"
     >
+        <style>{`
+        /* Custom date input styling */
+        input[type="date"] {
+          -webkit-appearance: none;
+          -moz-appearance: textfield;
+          appearance: none;
+          background-color: white;
+          background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23666'%3e%3cpath fill-rule='evenodd' d='M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z' clip-rule='evenodd'/%3e%3c/svg%3e");
+          background-repeat: no-repeat;
+          background-position: right 0.75rem center;
+          background-size: 1rem;
+          padding-right: 2.5rem;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+          opacity: 0;
+          position: absolute;
+          right: 0;
+          width: 20px;
+          height: 20px;
+          cursor: pointer;
+        }
+
+        /* Ensure consistent font size on mobile to prevent zoom */
+        @media (max-width: 768px) {
+          input[type="date"] {
+            font-size: 16px;
+          }
+        }
+      `}</style>
+      
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
         {/* From */}
         <div className="flex flex-col">

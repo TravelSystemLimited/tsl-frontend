@@ -257,9 +257,9 @@ const handleEmployeeChange = (value: string) => {
 
       {/* Employee dropdown - only show on employee-booking route */}
       {isEmployeeBookingRoute && (
-  <div className="px-4 pt-2 pb-1">
+  <div className="  flex justify-end ">
     <Select onValueChange={handleEmployeeChange}>  {/* Use handleEmployeeChange here */}
-      <SelectTrigger className="w-[300px]">
+      <SelectTrigger className="w-full pl-7 rounded-none border-b-1 shadow-inner border-t-0 border-l-0 border-r-0 border-gray-200 ">
         <SelectValue placeholder="Select an employee" />
       </SelectTrigger>
       <SelectContent>
