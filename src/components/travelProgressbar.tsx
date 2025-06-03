@@ -21,17 +21,17 @@ const TravelProgressBar = ({ currentStep }: ProgressBarProps) => {
   const steps: { label: Step; icon: JSX.Element; path: string }[] = [
     {
       label: 'flights',
-      icon: <Plane className="w-4 h-4" />,
+      icon: <Plane className="w-6 h-6" />,
       path: '/employee',
     },
     {
       label: 'hotels',
-      icon: <Hotel className="w-4 h-4" />,
+      icon: <Hotel className="w-6 h-6" />,
       path: '/hotels',
     },
     {
       label: 'transport',
-      icon: <Car className="w-4 h-4" />,
+      icon: <Car className="w-6 h-6" />,
       path: '/transport',
     },
   ];
@@ -59,7 +59,7 @@ const TravelProgressBar = ({ currentStep }: ProgressBarProps) => {
       {steps.map((step, index) => (
         <div key={step.label} className="flex items-center">
           <div
-            className={`w-10 h-10 rounded-md flex items-center justify-center transition-colors duration-200 ${getStepStyle(
+            className={`w-12 h-12 rounded-md flex items-center justify-center transition-colors duration-200 ${getStepStyle(
               step.label
             )}`}
             onClick={() => handleClick(step.label, step.path)}

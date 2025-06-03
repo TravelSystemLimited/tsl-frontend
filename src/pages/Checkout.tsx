@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { CreditCard, Check, Clock, Calendar, MapPin, User, Plane, Hotel, Car, Plus } from 'lucide-react';
 import Header from '@/components/ui/header';
 import { useNavigate } from 'react-router-dom';
+import { RxExit } from "react-icons/rx";
 
 const Checkout: React.FC = () => {
   const navigate=useNavigate();
@@ -44,9 +45,10 @@ const selectedCab = storedCab ? JSON.parse(storedCab) : {
   rating: "4.5",
   reviews: 200
 };
-
+const hotelprice =storedHotel? selectedHotel.price :0;
+const cabPrice =storedCab?selectedCab.price :0
   const [showCab, setShowCab] = useState(false);
-  const totalPrice = selectedFlight.price + selectedHotel.price +  selectedCab.price ;
+  const totalPrice = selectedFlight.price + hotelprice + cabPrice;
 
   const onCompleteBooking = () => {
    setShowConfirmation(true);
@@ -62,7 +64,10 @@ const selectedCab = storedCab ? JSON.parse(storedCab) : {
   return (
     <>
       <Header username='Employee' />
-      <div className="mt-8 w-full max-w-5xl mx-auto p-6">
+      <div className="mt-0 w-full max-w-5xl mx-auto p-6">
+       <div className='relative bottom-1 right-3' onClick={()=>{navigate(-1)}}>
+  <RxExit className='text-xl text-[#6c6c6c] rotate-180' />
+</div>
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Review & Checkout</h2>
         {selectedEmployee && (
           <div className="flex items-center mb-6">
@@ -110,7 +115,7 @@ const selectedCab = storedCab ? JSON.parse(storedCab) : {
       </div>
     </div>
   </div>
-            
+            {storedHotel ?(
             <div className="bg-white rounded-lg shadow-md p-6 mb-6">
               <div className="flex items-center mb-4">
                 <Hotel size={20} className="text-[#8C6D73] mr-2" />
@@ -141,7 +146,17 @@ const selectedCab = storedCab ? JSON.parse(storedCab) : {
                   </div>
                 </div>
               </div>
-            </div>
+            </div>):(
+               <div 
+                  onClick={()=>navigate('/hotels')}
+                  className="bg-white rounded-lg shadow-md p-6 mb-6 border-2 border-dashed border-gray-300 hover:border-[#8C6D73] cursor-pointer transition-colors duration-200 flex flex-col items-center justify-center py-8"
+                >
+                  <Plus size={24} className="text-[#8C6D73] mb-2" />
+                  <h3 className="text-lg font-medium text-gray-700">Add Hotel</h3>
+                  <p className="text-sm text-gray-500 mt-1">Click to add a Hotel to your booking</p>
+                </div>
+            )
+}
             
                       {storedCab ? (
            
@@ -220,10 +235,12 @@ const selectedCab = storedCab ? JSON.parse(storedCab) : {
                   <span className="text-gray-600">Flight</span>
                   <span className="font-medium">₹{selectedFlight.price}</span>
                 </div>
+                {storedHotel &&(
                 <div className="flex justify-between">
                   <span className="text-gray-600">Hotel</span>
                   <span className="font-medium">₹{selectedHotel.price}</span>
                 </div>
+                )}
                 {storedCab && (
                   <div className="flex justify-between">
                     <span className="text-gray-600">Transportation</span>
