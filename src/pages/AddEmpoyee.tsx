@@ -87,7 +87,7 @@ const EmployeeForm = () => {
 
     return (
         <div 
-        className=" w-[340px]">
+        className=" w-[393px]">
             <div className="bg-white rounded-lg shadow-xl overflow-hidden">
                 {/* Form Header */}
                 <div className="bg-[#e5e5e5] px-6 py-4">
