@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { Mail, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -19,6 +19,9 @@ const LoginForm: React.FC = () => {
             navigate("/employee")
         }
     };
+    useEffect(()=>{
+        sessionStorage.clear();
+    },[])
 
     return (
         <div className="w-full max-w-md">

@@ -1,22 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { CheckCircle, XCircle, Edit, Clock, Plane, Hotel, Car } from 'lucide-react';
+import { CheckCircle, XCircle, Edit, Clock, Plane, Hotel, Car, MapPin, User, Calendar } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
+import { useNavigate } from 'react-router-dom';
+
+interface BookingDetails {
+  flight?: {
+    airline: string;
+    from: string;
+    to: string;
+    departureTime: string;
+    arrivalTime: string;
+    departureDate: string;
+    price: number;
+  };
+  hotel?: {
+    name: string;
+    location: string;
+    amenities: string[];
+    address: string;
+    price: number;
+    checkInDate: string;
+    checkOutDate: string;
+  };
+  cab?: {
+    type: string;
+    capacity: number;
+    price: number;
+    pickupLocation: string;
+    dropLocation: string;
+    pickupTime: string;
+    pickupDate: string;
+  };
+}
 
 interface PendingRequest {
   id: string;
   employeeName: string;
   employeeEmail: string;
-  requestType: 'flight' | 'hotel' | 'taxi';
+  requestType: 'flight' | 'hotel' | 'taxi' | 'package';
   destination: string;
   departureDate: string;
   returnDate: string;
   cost: number;
   priority: 'low' | 'medium' | 'high';
   details: string;
+  bookingDetails: BookingDetails;
 }
 
 interface PendingRequestsSectionProps {
@@ -28,37 +60,143 @@ const mockRequests: PendingRequest[] = [
     id: '1',
     employeeName: 'Sarah Johnson',
     employeeEmail: 'sarah.johnson@tsl.com',
-    requestType: 'flight',
+    requestType: 'package',
     destination: 'New York, NY',
     departureDate: '2024-06-15',
     returnDate: '2024-06-18',
-    cost: 850,
+    cost: 33500,
     priority: 'high',
-    details: 'Client meeting with potential partner. Business class requested due to long flight duration.'
+    details: 'Client meeting with potential partner. Business class requested due to long flight duration.',
+    bookingDetails: {
+      flight: {
+        airline: "Air India",
+        from: "Bengaluru",
+        to: "New York",
+        departureTime: "08:30 AM",
+        arrivalTime: "11:15 AM",
+        departureDate: "2024-06-15",
+        price: 18500
+      },
+      hotel: {
+        name: "Grand Hyatt",
+        location: "New York, NY",
+        amenities: ["Free WiFi", "Swimming Pool", "Fitness Center"],
+        address: "12th cross, doddbalapura, nandi cross, 1-15/4",
+        price: 12000,
+        checkInDate: "2024-06-15",
+        checkOutDate: "2024-06-18"
+      },
+      cab: {
+        type: "Premium Sedan",
+        capacity: 4,
+        price: 3000,
+        pickupLocation: "New York Airport",
+        dropLocation: "Grand Hyatt",
+        pickupTime: "11:30 AM",
+        pickupDate: "2024-06-15"
+      }
+    }
   },
   {
     id: '2',
-    employeeName: 'Michael Chen',
-    employeeEmail: 'michael.chen@tsl.com',
-    requestType: 'hotel',
-    destination: 'London, UK',
+    employeeName: 'John Cruise',
+    employeeEmail: 'john.cruise@tsl.com',
+    requestType: 'package',
+    destination: 'Bangalore, KA',
     departureDate: '2024-06-20',
-    returnDate: '2024-06-25',
-    cost: 1200,
+    returnDate: '2024-06-21',
+    cost: 30500,
     priority: 'medium',
-    details: 'Conference attendance. 5-star hotel requested near conference venue.'
+    details: 'Regional conference attendance. Standard accommodations requested.',
+    bookingDetails: {
+      flight: {
+        airline: "Air India",
+        from: "Dubai",
+        to: "Bangalore",
+        departureTime: "08:30 AM",
+        arrivalTime: "11:15 AM",
+        departureDate: "2024-06-20",
+        price: 18500
+      },
+      hotel: {
+        name: "Grand Hyatt",
+        address: "12th cross, doddbalapura, nandi cross, 1-15/4",
+        location: "Bangalore",
+        amenities: ["Free WiFi", "Swimming Pool", "Fitness Center"],
+        price: 12000,
+        checkInDate: "2024-06-20",
+        checkOutDate: "2024-06-21"
+      }
+    }
   },
   {
     id: '3',
     employeeName: 'Emily Rodriguez',
     employeeEmail: 'emily.rodriguez@tsl.com',
-    requestType: 'taxi',
+    requestType: 'flight',
     destination: 'Chicago, IL',
     departureDate: '2024-06-12',
-    returnDate: '2024-06-12',
-    cost: 75,
+    returnDate: '2024-06-15',
+    cost: 18500,
     priority: 'low',
-    details: 'Airport transfer for same-day business meeting.'
+    details: 'Training session attendance. Economy class acceptable.',
+    bookingDetails: {
+      flight: {
+        airline: "Air India",
+        from: "Mumbai",
+        to: "Chicago",
+        departureTime: "08:30 AM",
+        arrivalTime: "11:15 AM",
+        departureDate: "2024-06-12",
+        price: 18500
+      }
+    }
+  },
+  {
+    id: '4',
+    employeeName: 'Michael Chen',
+    employeeEmail: 'michael.chen@tsl.com',
+    requestType: 'hotel',
+    destination: 'Los Angeles, CA',
+    departureDate: '2024-06-25',
+    returnDate: '2024-06-28',
+    cost: 15000,
+    priority: 'medium',
+    details: 'Product launch event. Central location preferred.',
+    bookingDetails: {
+      hotel: {
+        name: "Beverly Hills Hotel",
+        location: "Los Angeles, CA",
+        amenities: ["Free WiFi", "Pool", "Business Center", "Spa"],
+        address: "9641 Sunset Boulevard, Beverly Hills, CA 90210",
+        price: 15000,
+        checkInDate: "2024-06-25",
+        checkOutDate: "2024-06-28"
+      }
+    }
+  },
+  {
+    id: '5',
+    employeeName: 'Lisa Wang',
+    employeeEmail: 'lisa.wang@tsl.com',
+    requestType: 'taxi',
+    destination: 'San Francisco, CA',
+    departureDate: '2024-06-30',
+    returnDate: '2024-06-30',
+    cost: 2500,
+    priority: 'low',
+    details: 'Airport transfer for same-day business meeting.',
+    bookingDetails: {
+      cab: {
+        type: "Standard Sedan",
+        capacity: 4,
+        price: 2500,
+        pickupLocation: "San Francisco Airport",
+        dropLocation: "Downtown Conference Center",
+        pickupTime: "09:30 AM",
+        pickupDate: "2024-06-30"
+      }
+    }
   }
 ];
 
@@ -66,6 +204,110 @@ export const PendingRequestsSection: React.FC<PendingRequestsSectionProps> = ({ 
   const [requests, setRequests] = useState<PendingRequest[]>(mockRequests);
   const [selectedRequest, setSelectedRequest] = useState<PendingRequest | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const navigate = useNavigate();
+
+  // Listen for request status changes from the details page
+  useEffect(() => {
+    const handleRequestStatusChange = (event: CustomEvent) => {
+      const { requestId, action } = event.detail;
+      if (action === 'approved' || action === 'rejected') {
+        setRequests(prev => prev.filter(req => req.id !== requestId));
+        
+        toast({
+          title: action === 'approved' ? "Request Approved" : "Request Rejected",
+          description: `The travel request has been ${action} successfully.`,
+          variant: action === 'rejected' ? "destructive" : "default",
+        });
+      }
+    };
+
+    // Check sessionStorage for any recent actions
+    const checkForRecentActions = () => {
+      const approvedId = sessionStorage.getItem('approvedRequestId');
+      const rejectedId = sessionStorage.getItem('rejectedRequestId');
+      const lastActionTimestamp = sessionStorage.getItem('lastActionTimestamp');
+      
+      // Only process if the action happened recently (within 5 seconds)
+      if (lastActionTimestamp && Date.now() - parseInt(lastActionTimestamp) < 5000) {
+        if (approvedId) {
+          setRequests(prev => prev.filter(req => req.id !== approvedId));
+          sessionStorage.removeItem('approvedRequestId');
+          toast({
+            title: "Request Approved",
+            description: "The travel request has been approved successfully.",
+          });
+        }
+        
+        if (rejectedId) {
+          setRequests(prev => prev.filter(req => req.id !== rejectedId));
+          sessionStorage.removeItem('rejectedRequestId');
+          toast({
+            title: "Request Rejected",
+            description: "The travel request has been rejected.",
+            variant: "destructive",
+          });
+        }
+        
+        sessionStorage.removeItem('lastActionTimestamp');
+        sessionStorage.removeItem('requestAction');
+      }
+    };
+
+    // Check immediately and then listen for events
+    checkForRecentActions();
+    window.addEventListener('requestStatusChanged', handleRequestStatusChange as EventListener);
+    
+    // Also check periodically in case we missed the event
+    const interval = setInterval(checkForRecentActions, 1000);
+
+    return () => {
+      window.removeEventListener('requestStatusChanged', handleRequestStatusChange as EventListener);
+      clearInterval(interval);
+    };
+  }, []);
+
+  // Listen for updated requests from modification pages
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const updatedRequestStr = sessionStorage.getItem('updatedRequest');
+      if (updatedRequestStr) {
+        try {
+          const updatedRequest = JSON.parse(updatedRequestStr);
+          handleUpdateRequest(updatedRequest);
+          sessionStorage.removeItem('updatedRequest');
+          
+          // Clear modification data
+          sessionStorage.removeItem('hotelToModify');
+          sessionStorage.removeItem('originalHotel');
+          sessionStorage.removeItem('cabToModify');
+          sessionStorage.removeItem('originalCab');
+          sessionStorage.removeItem('requestToModify');
+          sessionStorage.removeItem('employeeToModify');
+        } catch (error) {
+          console.error('Error parsing updated request:', error);
+        }
+      }
+    };
+
+    handleStorageChange();
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  const handleUpdateRequest = (updatedRequest: PendingRequest) => {
+    setRequests(prev => 
+      prev.map(req => 
+        req.id === updatedRequest.id ? updatedRequest : req
+      )
+    );
+    toast({
+      title: "Request Updated",
+      description: "The travel request has been modified successfully.",
+    });
+  };
 
   const handleApprove = (requestId: string) => {
     setRequests(prev => prev.filter(req => req.id !== requestId));
@@ -86,12 +328,61 @@ export const PendingRequestsSection: React.FC<PendingRequestsSectionProps> = ({ 
     setDialogOpen(false);
   };
 
-  const handleModify = (requestId: string) => {
-    toast({
-      title: "Modification Request",
-      description: "Employee will be notified to modify their request.",
-    });
-    setDialogOpen(false);
+  const handleRequestClick = (request: PendingRequest) => {
+    navigate('/request-details', { state: { request } });
+  };
+
+  const handleViewDetails = (request: PendingRequest) => {
+    setSelectedRequest(request);
+    setDialogOpen(true);
+  };
+
+  const handleModify = (request: PendingRequest) => {
+    if (request.bookingDetails.flight) {
+      sessionStorage.setItem('source', request.bookingDetails.flight.from);
+      sessionStorage.setItem('destination', request.bookingDetails.flight.to);
+      sessionStorage.setItem('departureDate', request.bookingDetails.flight.departureDate);
+      if (request.returnDate) {
+        sessionStorage.setItem('returnDate', request.returnDate);
+      }
+      sessionStorage.setItem('originalFlight', JSON.stringify(request.bookingDetails.flight));
+    }
+    
+    sessionStorage.setItem('requestToModify', JSON.stringify(request));
+    sessionStorage.setItem('employeeToModify', JSON.stringify({
+      id: request.id,
+      name: request.employeeName,
+    }));
+    
+    navigate('/modify-booking');
+  };
+
+  const handleModifyHotel = (request: PendingRequest) => {
+    if (request.bookingDetails.hotel) {
+      sessionStorage.setItem('hotelToModify', JSON.stringify(request.bookingDetails.hotel));
+      sessionStorage.setItem('originalHotel', JSON.stringify(request.bookingDetails.hotel));
+      sessionStorage.setItem('employeeToModify', JSON.stringify({
+        id: request.id,
+        name: request.employeeName,
+      }));
+      
+      sessionStorage.setItem('requestToModify', JSON.stringify(request));
+      navigate('/modify-hotel-booking');
+    }
+  };
+
+  const handleModifyCabs = (request: PendingRequest) => {
+    if (request.bookingDetails.cab) {
+      sessionStorage.setItem('cabToModify', JSON.stringify(request.bookingDetails.cab));
+      sessionStorage.setItem('originalCab', JSON.stringify(request.bookingDetails.cab));
+      sessionStorage.setItem('employeeToModify', JSON.stringify({
+        id: request.id,
+        name: request.employeeName,
+      }));
+      
+      sessionStorage.setItem('requestToModify', JSON.stringify(request));
+      navigate('/modify-cab-booking');
+    }
   };
 
   const getRequestIcon = (type: string) => {
@@ -99,6 +390,13 @@ export const PendingRequestsSection: React.FC<PendingRequestsSectionProps> = ({ 
       case 'flight': return <Plane className="h-4 w-4" />;
       case 'hotel': return <Hotel className="h-4 w-4" />;
       case 'taxi': return <Car className="h-4 w-4" />;
+      case 'package': return (
+        <div className="flex">
+          <Plane className="h-4 w-4" />
+          <Hotel className="h-4 w-4 -ml-1" />
+          <Car className="h-4 w-4 -ml-1" />
+        </div>
+      );
       default: return <Clock className="h-4 w-4" />;
     }
   };
@@ -112,47 +410,61 @@ export const PendingRequestsSection: React.FC<PendingRequestsSectionProps> = ({ 
     }
   };
 
+  const calculateTotalCost = (bookingDetails: BookingDetails) => {
+    return (
+      (bookingDetails?.flight?.price ?? 0) +
+      (bookingDetails?.hotel?.price ?? 0) +
+      (bookingDetails?.cab?.price ?? 0)
+    );
+  };
+
   const displayRequests = expanded ? requests : requests.slice(0, 3);
 
   return (
     <>
       <Card className="bg-white border-none shadow-md">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-[#8C6D73]">
-            <Clock className="h-5 w-5" />
+          <CardTitle className="flex items-center gap-2 text-xl text-[#8C6D73]">
+            <Clock className="h-5 w-5 " />
             Pending Requests
           </CardTitle>
           <CardDescription>
             {requests.length} requests awaiting your approval
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className='p-2'>
           <div className="space-y-4">
             {displayRequests.map((request) => (
               <div
                 key={request.id}
-                className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-                onClick={() => {
-                  setSelectedRequest(request);
-                  setDialogOpen(true);
-                }}
+                onClick={()=>{ handleRequestClick(request)}}
+                className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-[#3b3b3b] bg-opacity-10 rounded-full">
+                  <div className="p-2 bg-[#8C6D73] bg-opacity-10 rounded-full">
                     {getRequestIcon(request.requestType)}
                   </div>
                   <div>
                     <h4 className="font-medium text-gray-900">{request.employeeName}</h4>
                     <p className="text-sm text-gray-500">{request.destination}</p>
+                    <p className="text-xs text-gray-400">{request.departureDate} - {request.returnDate}</p>
                   </div>
                 </div>
-                <div className="text-right">
+                 <div className="text-right">
                   <Badge className={getPriorityColor(request.priority)}>
                     {request.priority}
                   </Badge>
-                  <p className="text-sm font-medium text-gray-900 mt-1">${request.cost}</p>
+               <p className="text-sm font-medium text-gray-900 mt-1">
+  ₹
+  {
+    (request.bookingDetails?.flight?.price ?? 0) +
+    (request.bookingDetails?.hotel?.price ?? 0) +
+    (request.bookingDetails?.cab?.price ?? 0)
+  }
+</p>
                 </div>
               </div>
+              
             ))}
             {!expanded && requests.length > 3 && (
               <p className="text-center text-sm text-gray-500 mt-4">
@@ -162,82 +474,9 @@ export const PendingRequestsSection: React.FC<PendingRequestsSectionProps> = ({ 
           </div>
         </CardContent>
       </Card>
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-  <DialogContent className="sm:max-w-2xl max-w-[95vw] rounded-lg">
-    <DialogHeader>
-      <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
-        {selectedRequest && getRequestIcon(selectedRequest.requestType)}
-        Request Details
-      </DialogTitle>
-      <DialogDescription className="text-sm sm:text-base">
-        Review and take action on this travel request
-      </DialogDescription>
-    </DialogHeader>
-    {selectedRequest && (
-      <div className="space-y-4 sm:space-y-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-700">Employee</label>
-            <p className="text-gray-900 text-sm sm:text-base">{selectedRequest.employeeName}</p>
-            <p className="text-xs sm:text-sm text-gray-500">{selectedRequest.employeeEmail}</p>
-          </div>
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-700">Type</label>
-            <p className="text-gray-900 text-sm sm:text-base capitalize">{selectedRequest.requestType}</p>
-          </div>
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-700">Destination</label>
-            <p className="text-gray-900 text-sm sm:text-base">{selectedRequest.destination}</p>
-          </div>
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-700">Cost</label>
-            <p className="text-gray-900 font-medium text-sm sm:text-base">₹{selectedRequest.cost}</p>
-          </div>
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-700">Departure</label>
-            <p className="text-gray-900 text-sm sm:text-base">{selectedRequest.departureDate}</p>
-          </div>
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-700">Return</label>
-            <p className="text-gray-900 text-sm sm:text-base">{selectedRequest.returnDate}</p>
-          </div>
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium text-gray-700">Details</label>
-          <p className="text-gray-900 mt-1 text-sm sm:text-base">{selectedRequest.details}</p>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-2 sm:pt-4">
-          <Button
-            onClick={() => handleApprove(selectedRequest.id)}
-            className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2 text-sm sm:text-base"
-            size="sm"
-          >
-            <CheckCircle className="h-4 w-4" />
-            Approve
-          </Button>
-          <Button
-            onClick={() => handleReject(selectedRequest.id)}
-            variant="destructive"
-            className="flex items-center gap-2 text-sm sm:text-base"
-            size="sm"
-          >
-            <XCircle className="h-4 w-4" />
-            Reject
-          </Button>
-          <Button
-            onClick={() => handleModify(selectedRequest.id)}
-            variant="outline"
-            className="flex items-center gap-2 text-sm sm:text-base"
-            size="sm"
-          >
-            <Edit className="h-4 w-4" />
-            Request Modification
-          </Button>
-        </div>
-      </div>
-    )}
-  </DialogContent>
-</Dialog>
+
+
+   
     </>
   );
 };

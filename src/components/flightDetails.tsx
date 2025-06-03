@@ -31,6 +31,7 @@ const FlightCard = ({
   flightType,
   travelClass,
   onSelect,
+  
 }: FlightCardProps) => {
     const { setSelectedDestination } = useFlightStore();
   const navigate=useNavigate();
