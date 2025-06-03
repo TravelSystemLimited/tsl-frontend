@@ -1,4 +1,4 @@
-FROM node:20-alpine AS build
+FROM node:20-alpine
 
 WORKDIR /app
 
@@ -14,16 +14,11 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Production stage
-FROM nginx:alpine
+# Install a simple HTTP server for serving static content
+RUN npm install -g serve
 
-# Copy the build output to replace the default nginx contents
-COPY --from=build /app/dist /usr/share/nginx/html
+# Expose the port the app runs on
+EXPOSE 3000
 
-# Copy custom nginx config if needed
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Expose port 80
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"] 
+# Command to run the app
+CMD ["serve", "-s", "dist", "-l", "3000"] 
