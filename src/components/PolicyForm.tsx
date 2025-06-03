@@ -99,7 +99,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ onPolicyAdded }) => {
     };
 
     return (
-        <div className="w-[340px] mx-auto p-4 max-w-4xl mt-10">
+        <div className="w-[393px] mx-auto p-4 max-w-4xl mt-10">
              <h2 className="text-xl font-bold mb-4 text-center sm:text-left">Create New Travel Policy</h2>
             <div className="bg-white shadow-md rounded px-4 sm:px-8 pt-6 pb-8 mb-4">
                 <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4">
