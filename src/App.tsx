@@ -25,6 +25,8 @@ import { ThemeProvider } from "./context/ThemeContext";
 import PolicyForm from "./components/PolicyForm";
 import EmployeeForm from "./components/EmployeeForm";
 
+import RequestDetailsPage from "./components/dashboard/RequestDetailsPage";
+// import ModifyBooking from "./pages/ModifyBooking";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -49,7 +51,7 @@ const App = () => {
               <Route path="/cabs" element={<CabBooking />} />
               <Route path="/hotels" element={<HotelBooking />} />
               <Route path="/flights" element={<Flights />} />
-
+   <Route path="/request-details" element={<RequestDetailsPage/>}/>
               {/* Dashboard & nested pages */}
               <Route path="/dashboard" element={<DashboardLayout />}>
                 <Route index element={<Dashboard />} />
