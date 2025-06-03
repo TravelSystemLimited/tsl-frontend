@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { Mail, Lock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm: React.FC = () => {
+    const navigate = useNavigate()
     const { primaryColor } = useTheme();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -11,8 +13,11 @@ const LoginForm: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // Handle login logic here
-        console.log('Login attempted with:', { email, password });
+        if (email === "manager@gmail.com") {
+            navigate("/dashboard")
+        } else {
+            navigate("/employee")
+        }
     };
 
     return (
