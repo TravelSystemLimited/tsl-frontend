@@ -48,15 +48,18 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     const [currentTheme, setCurrentTheme] = useState<ThemeType>('default');
 
     useEffect(() => {
-        const url = window.location.href.toLowerCase(); // ✅ includes full domain + path
-        if (url.includes('tsl')) {
-            setCurrentTheme('tsl');
-        } else if (url.includes('s2c')) {
+        const hostname = window.location.hostname.toLowerCase();
+        const pathname = window.location.pathname.toLowerCase();
+
+        if (pathname.startsWith('/s2c')) {
             setCurrentTheme('s2c');
-        } else {
+        } else if (hostname.includes('tsl')) {
             setCurrentTheme('tsl');
+        } else {
+            setCurrentTheme('default');
         }
     }, []);
+
 
     const value = {
         currentTheme,
