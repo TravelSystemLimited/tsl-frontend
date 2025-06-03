@@ -21,6 +21,8 @@ import CabBooking from "./pages/CabBooking";
 
 
 import { ThemeProvider } from "./context/ThemeContext";
+import PolicyForm from "./components/PolicyForm";
+import EmployeeForm from "./components/EmployeeForm";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -47,6 +49,8 @@ const App = () => {
                 <Route path="analytics" element={<Analytics />} />
                 <Route path="history" element={<History />} />
                 <Route path="bookings" element={<Bookings />} />
+                <Route path="add-policy" element={<PolicyForm />} />
+                <Route path="add-employee" element={<EmployeeForm />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
