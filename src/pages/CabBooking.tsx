@@ -20,7 +20,7 @@ const cabs = [
         extraFare:"₹11/km after 156 kms",
         cancellation:"Cancellation",
         freeTime:"Free till 1 hour of departure",
-        price:23000,
+        price:1000,
         rating:"4.5",
         reviews:135,
         imageUrl:"/cab1.png "
@@ -33,7 +33,7 @@ const cabs = [
         extraFare:"₹11/km after 156 kms",
         cancellation:"Cancellation",
         freeTime:"Free till 1 hour of departure",
-        price:23000,
+        price:1500,
         rating:"4.2",
         reviews:135,
         imageUrl:"/cab2.png "
@@ -46,7 +46,7 @@ const cabs = [
         extraFare:"₹11/km after 156 kms",
         cancellation:"Cancellation",
         freeTime:"Free till 1 hour of departure",
-        price:23000,
+        price:2000,
         rating:"4.2",
         reviews:135,
         imageUrl:"/cab3.png "
@@ -59,7 +59,7 @@ const cabs = [
         extraFare:"₹11/km after 156 kms",
         cancellation:"Cancellation",
         freeTime:"Free till 1 hour of departure",
-        price:23000,
+        price:2200,
         rating:"4.2",
         reviews:135,
         imageUrl:"/cab4.png "
@@ -118,9 +118,10 @@ const CabBooking = () => {
       {/* <FlightSearchBar onSearch={handleSearch} /> */}
 
     <div className="mt-12 px-4 pb-10">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg text-[#6c6c6c] font-semibold">Cabs from Dubai Airport to Miracle Garden</h2>
-        <div className="flex gap-4 items-center text-sm">
+       <h2 className="text-md text-[#6c6c6c] font-semibold mb-5">Cabs from Dubai Airport to Miracle Garden</h2>
+      <div className="flex justify-end items-center mb-4">
+       
+        <div className="flex gap-4 items-center justify-end text-sm">
           <button className="text-gray-500 hover:underline" onClick={()=>navigate('/checkout')}>Skip</button>
           <button className="flex items-center gap-2 bg-[#7d5c65] text-white px-4 py-1.5 rounded-md" onClick={()=>navigate('/checkout')}>
             <span>Book</span>

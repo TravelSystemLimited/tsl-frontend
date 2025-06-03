@@ -136,7 +136,7 @@ export const EmployeeFilter: React.FC<EmployeeFilterProps> = ({ onFilterChange }
   return (
     <Card className="bg-white border-none shadow-md">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-[#3b3b3b]">
+        <CardTitle className="flex items-center text-1xl gap-2 text-[#3b3b3b]">
           <Users className="h-5 w-5" />
           Employee Management
         </CardTitle>
@@ -181,48 +181,57 @@ export const EmployeeFilter: React.FC<EmployeeFilterProps> = ({ onFilterChange }
 
         {/* Employee List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredEmployees.map((employee) => (
-            <Card
-              key={employee.id}
-              className="p-4 border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
-              onClick={() => onFilterChange(employee.id)}
-            >
-              <div className="flex items-start gap-3">
-                <Avatar className="h-12 w-12">
-                  <AvatarImage src={employee.avatar} />
-                  <AvatarFallback className="bg-[#8C6D73] text-white">
-                    {getInitials(employee.name)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-medium text-gray-900 truncate">{employee.name}</h3>
-                  <p className="text-sm text-gray-500 truncate">{employee.position}</p>
-                  <Badge className={`mt-1 ${getStatusColor(employee.status)}`}>
-                    {employee.status}
-                  </Badge>
-                </div>
-              </div>
-              <div className="mt-4 space-y-2">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Building className="h-3 w-3" />
-                  {employee.department}
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Mail className="h-3 w-3" />
-                  {employee.email}
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Total Spent:</span>
-                  <span className="font-medium">${employee.totalSpent.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Trips:</span>
-                  <span className="font-medium">{employee.trips}</span>
-                </div>
-              </div>
-            </Card>
-          ))}
+  {filteredEmployees.map((employee) => (
+    <Card
+      key={employee.id}
+      className="p-4 border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
+      onClick={() => onFilterChange(employee.id)}
+    >
+      <div className="flex items-start gap-3">
+        <Avatar className="h-12 w-12">
+          <AvatarImage src={employee.avatar} />
+          <AvatarFallback className="bg-[#8C6D73] text-white">
+            {getInitials(employee.name)}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex-1 min-w-0">
+          <div className="flex justify-between items-start">
+            <div className="min-w-0">
+              <h3 className="font-medium text-gray-900 truncate">{employee.name}</h3>
+              <p className="text-sm text-gray-500 truncate">{employee.position}</p>
+            </div>
+            {/* Mobile-only status badge */}
+            <Badge className={`md:hidden ${getStatusColor(employee.status)}`}>
+              {employee.status}
+            </Badge>
+          </div>
+          {/* Desktop status badge (hidden on mobile) */}
+          <Badge className={`mt-1 hidden md:inline-flex ${getStatusColor(employee.status)}`}>
+            {employee.status}
+          </Badge>
         </div>
+      </div>
+      <div className="mt-4 space-y-2">
+        <div className="flex items-center gap-2 text-sm text-gray-600">
+          <Building className="h-3 w-3" />
+          {employee.department}
+        </div>
+        <div className="flex items-center gap-2 text-sm text-gray-600">
+          <Mail className="h-3 w-3" />
+          {employee.email}
+        </div>
+        <div className="flex justify-between text-sm">
+          <span className="text-gray-600">Total Spent:</span>
+          <span className="font-medium">₹{employee.totalSpent.toLocaleString()}</span>
+        </div>
+        <div className="flex justify-between text-sm">
+          <span className="text-gray-600">Trips:</span>
+          <span className="font-medium">{employee.trips}</span>
+        </div>
+      </div>
+    </Card>
+  ))}
+</div>
 
         {filteredEmployees.length === 0 && (
           <div className="text-center py-8">

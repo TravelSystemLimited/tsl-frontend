@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { CheckCircle, XCircle, Edit, Clock, Plane, Hotel, Car, Info, Calendar, MapPin, DollarSign } from 'lucide-react';
+import { CheckCircle, XCircle, Edit, Clock, Plane, Hotel, Car } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
 
 interface PendingRequest {
@@ -117,9 +116,9 @@ export const PendingRequestsSection: React.FC<PendingRequestsSectionProps> = ({ 
 
   return (
     <>
-      <Card className="bg-white border-none w-[950px] shadow-md">
+      <Card className="bg-white border-none shadow-md">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-[#3b3b3b]">
+          <CardTitle className="flex items-center gap-2 text-[#8C6D73]">
             <Clock className="h-5 w-5" />
             Pending Requests
           </CardTitle>
@@ -139,7 +138,7 @@ export const PendingRequestsSection: React.FC<PendingRequestsSectionProps> = ({ 
                 }}
               >
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-[#8C6D73] bg-opacity-10 rounded-full">
+                  <div className="p-2 bg-[#3b3b3b] bg-opacity-10 rounded-full">
                     {getRequestIcon(request.requestType)}
                   </div>
                   <div>
@@ -163,113 +162,82 @@ export const PendingRequestsSection: React.FC<PendingRequestsSectionProps> = ({ 
           </div>
         </CardContent>
       </Card>
-
-    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-  <DialogContent className="rounded-lg">
-    <DialogHeader className="border-b pb-4">
-      <div className="flex items-center gap-3">
-        {selectedRequest && (
-          <div className="p-2 rounded-full bg-blue-50 text-blue-600">
-            {getRequestIcon(selectedRequest.requestType)}
-          </div>
-        )}
-        <div>
-          <DialogTitle className="text-lg font-semibold text-gray-800">
-            Travel Request Details
-          </DialogTitle>
-          <DialogDescription className="text-gray-500 text-sm">
-            Review request from {selectedRequest?.employeeName}
-          </DialogDescription>
-        </div>
-      </div>
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+  <DialogContent className="sm:max-w-2xl max-w-[95vw] rounded-lg">
+    <DialogHeader>
+      <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
+        {selectedRequest && getRequestIcon(selectedRequest.requestType)}
+        Request Details
+      </DialogTitle>
+      <DialogDescription className="text-sm sm:text-base">
+        Review and take action on this travel request
+      </DialogDescription>
     </DialogHeader>
-
     {selectedRequest && (
-      <div className="space-y-6 py-4">
-        {/* Key Details Card */}
-        <div className="bg-gray-50/50 p-4 rounded-lg border">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <DetailCard 
-              label="Destination" 
-              value={selectedRequest.destination} 
-              icon={<MapPin className="h-4 w-4" />}
-            />
-            <DetailCard 
-              label="Cost" 
-              value={`$${selectedRequest.cost}`} 
-              icon={<DollarSign className="h-4 w-4" />}
-              highlight
-            />
-            <DetailCard 
-              label="Departure" 
-              value={selectedRequest.departureDate} 
-              icon={<Calendar className="h-4 w-4" />}
-            />
-            <DetailCard 
-              label="Return" 
-              value={selectedRequest.returnDate} 
-              icon={<Calendar className="h-4 w-4" />}
-            />
+      <div className="space-y-4 sm:space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-gray-700">Employee</label>
+            <p className="text-gray-900 text-sm sm:text-base">{selectedRequest.employeeName}</p>
+            <p className="text-xs sm:text-sm text-gray-500">{selectedRequest.employeeEmail}</p>
+          </div>
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-gray-700">Type</label>
+            <p className="text-gray-900 text-sm sm:text-base capitalize">{selectedRequest.requestType}</p>
+          </div>
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-gray-700">Destination</label>
+            <p className="text-gray-900 text-sm sm:text-base">{selectedRequest.destination}</p>
+          </div>
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-gray-700">Cost</label>
+            <p className="text-gray-900 font-medium text-sm sm:text-base">₹{selectedRequest.cost}</p>
+          </div>
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-gray-700">Departure</label>
+            <p className="text-gray-900 text-sm sm:text-base">{selectedRequest.departureDate}</p>
+          </div>
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-gray-700">Return</label>
+            <p className="text-gray-900 text-sm sm:text-base">{selectedRequest.returnDate}</p>
           </div>
         </div>
-
-        {/* Additional Information */}
-        <div>
-          <h3 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-            <Info className="h-4 w-4 text-gray-500" />
-            Additional Information
-          </h3>
-          <div className="bg-white p-3 rounded-md border text-gray-700">
-            {selectedRequest.details || "No additional details provided"}
-          </div>
+        <div className="space-y-1">
+          <label className="text-sm font-medium text-gray-700">Details</label>
+          <p className="text-gray-900 mt-1 text-sm sm:text-base">{selectedRequest.details}</p>
         </div>
-
-        {/* Action Buttons */}
-        <div className="flex flex-wrap gap-3 pt-4 border-t justify-end">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-2 sm:pt-4">
           <Button
-            variant="outline"
-            onClick={() => handleModify(selectedRequest.id)}
-            className="flex items-center gap-2 border-gray-300"
+            onClick={() => handleApprove(selectedRequest.id)}
+            className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2 text-sm sm:text-base"
+            size="sm"
           >
-            <Edit className="h-4 w-4" />
-            Request Changes
+            <CheckCircle className="h-4 w-4" />
+            Approve
           </Button>
           <Button
-            variant="destructive"
             onClick={() => handleReject(selectedRequest.id)}
-            className="flex items-center gap-2"
+            variant="destructive"
+            className="flex items-center gap-2 text-sm sm:text-base"
+            size="sm"
           >
             <XCircle className="h-4 w-4" />
             Reject
           </Button>
           <Button
-            onClick={() => handleApprove(selectedRequest.id)}
-            className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2"
+            onClick={() => handleModify(selectedRequest.id)}
+            variant="outline"
+            className="flex items-center gap-2 text-sm sm:text-base"
+            size="sm"
           >
-            <CheckCircle className="h-4 w-4" />
-            Approve
+            <Edit className="h-4 w-4" />
+            Request Modification
           </Button>
         </div>
       </div>
     )}
   </DialogContent>
 </Dialog>
-
-
     </>
   );
 };
-// Reusable DetailCard component
-function DetailCard({ label, value, icon, highlight = false }) {
-  return (
-    <div className={`p-2 ${highlight ? 'bg-blue-50 rounded-md' : ''}`}>
-      <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
-        {icon}
-        <span>{label}</span>
-      </div>
-      <p className={`text-sm ${highlight ? 'font-medium text-blue-700' : 'text-gray-900'}`}>
-        {value}
-      </p>
-    </div>
-  );
-}

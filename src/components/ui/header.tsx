@@ -1,6 +1,6 @@
 import React from "react";
 import logo from "../../../public/logo.png"; 
-import { VscAccount } from "react-icons/vsc";// Make sure this path is correct or use 'next/image' if in Next.js
+import { VscAccount } from "react-icons/vsc";
 
 interface HeaderProps {
   username: string;
@@ -8,21 +8,15 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ username }) => {
   return (
-    <header className="w-full flex justify-between items-center px-6 py-8 bg-[#e5e5e5] shadow-sm">
-      {/* Logo and Text */}
-      <div className="flex items-center space-x-3">
-        {/* Logo Image */}
-        <img src={logo} alt="Logo" className=" w-44 object-contain" />
-
-        {/* Text Content */}
-   
+    <header className="w-full flex justify-between items-center px-6 py-6 md:py-4 bg-[#e5e5e5] shadow-sm">
+      {/* Logo on the left corner */}
+      <div className="flex items-center">
+        <img src={logo} alt="Logo" className="w-32 object-contain" />
       </div>
 
-      {/* User Section */}
-      <div className="flex items-center space-x-2 text-[#6c6c6c]">
-        <span className="text-sm ">{username}</span>
-     <VscAccount className="text-3xl" />
-      
+      {/* Account icon on the right corner */}
+      <div className="flex items-center text-[#6c6c6c]">
+        <VscAccount className="text-2xl" />
       </div>
     </header>
   );
