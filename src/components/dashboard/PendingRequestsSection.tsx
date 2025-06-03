@@ -207,6 +207,7 @@ export const PendingRequestsSection: React.FC<PendingRequestsSectionProps> = ({ 
   const navigate = useNavigate();
 useEffect(() => {
   sessionStorage.setItem('pendingRequestsCount', requests.length.toString());
+  window.dispatchEvent(new Event('pendingRequestsUpdated'));
 }, [requests]);
 
   // Listen for request status changes from the details page

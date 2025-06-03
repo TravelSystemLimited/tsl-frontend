@@ -265,7 +265,7 @@ const RequestDetailsPage = () => {
 
   return (
     <>
-      <Header username='Manager' />
+      <Header username='Manager Name' />
       <button className='p-4 border-none outline-none flex items-center' onClick={() => navigate(-1)}>  <ChevronLeft width={20} height={20} />  back</button>
       <div className="container mx-auto p-4 ">
 
