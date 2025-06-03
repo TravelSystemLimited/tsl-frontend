@@ -21,10 +21,8 @@ const HotelSearchBar: React.FC<HotelSearchBarProps> = ({ onSearch }) => {
   const [hotelClass, setHotelClass] = useState<string>('All');
   const [guests, setGuests] = useState<number>(1);
   const [rooms, setRooms] = useState<number>(1);
-const parseMMDDYYYY = (str: string): Date => {
-  const [month, day, year] = str.split('/').map(Number);
-  return new Date(year, month - 1, day+1); // JS months are 0-indexed
-};
+
+
   useEffect(() => {
     // Load flight data from sessionStorage when component mounts
     const flightData = sessionStorage.getItem('selectedFlight');
@@ -36,10 +34,10 @@ const parseMMDDYYYY = (str: string): Date => {
         }
         if (flight.departureDate) {
         
-         setCheckIn(parseMMDDYYYY(flight.departureDate));
+         setCheckIn(new Date(flight.departureDate));
         }
         if (flight.arrivalDate) {
-           setCheckOut(parseMMDDYYYY(flight.arrivalDate));
+           setCheckOut(new Date(flight.arrivalDate));
         }
       } catch (error) {
         console.error('Error parsing flight data:', error);
