@@ -24,24 +24,27 @@ const Analytics = () => {
           </div>
         </div>
 
-    {/* Analytics Stats */}
+{/* Analytics Stats */}
 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
   {analyticsStats.map((stat, index) => (
-    <Card key={index} className="bg-white border-none shadow-sm">
+    <Card key={index} className="bg-white border-none shadow-sm relative">
       <CardContent className="p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-gray-600">{stat.label}</p>
-            <p className={`text-1xl font-bold ${stat.color}`}>{stat.value}</p>
-            <p className="text-xs text-gray-500 mt-1">{stat.trend} from last month</p>
-          </div>
-          <div className="flex-shrink-0 ml-2">
-    <stat.icon className={`h-5 w-5 ${stat.color}`} />
-  </div>        </div>
+        {/* Icon in top right */}
+        <div className="absolute top-4 right-1">
+          <stat.icon className={`h-5 w-5 ${stat.color}`} />
+        </div>
+
+        {/* Main content */}
+        <div>
+          <p className="text-sm mr-3 text-gray-600">{stat.label}</p>
+          <p className={`text-1xl font-bold ${stat.color}`}>{stat.value}</p>
+          <p className="text-xs text-gray-500 mt-1">{stat.trend} from last month</p>
+        </div>
       </CardContent>
     </Card>
   ))}
 </div>
+
 
 
         {/* Analytics Dashboard */}

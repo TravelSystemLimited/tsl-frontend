@@ -56,13 +56,23 @@ const selectedCab = storedCab ? JSON.parse(storedCab) : {
   const toggleCab = () => {
     setShowCab(!showCab);
   };
-
+  const storedEmployee = sessionStorage.getItem('selectedEmployee');
+  const selectedEmployee = storedEmployee ? JSON.parse(storedEmployee) : null;
+  console.log("dataaaaaaaaaaaaa", selectedEmployee)
   return (
     <>
       <Header username='Employee' />
       <div className="mt-8 w-full max-w-5xl mx-auto p-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Review & Checkout</h2>
-        
+        {selectedEmployee && (
+          <div className="flex items-center mb-6">
+            <User className="h-5 w-5 text-gray-500 mr-2" />
+            <span className="text-gray-600">Booking for:</span>
+            <span className="ml-2 font-medium text-[#8C6D73]">
+              {selectedEmployee.name}
+            </span>
+          </div>
+        )}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="col-span-1 lg:col-span-2">
               <div className="bg-white rounded-lg shadow-md p-6 mb-6">

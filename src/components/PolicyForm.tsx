@@ -1,4 +1,3 @@
-// PolicyForm.js
 import React, { useState, useEffect } from 'react';
 
 interface Policy {
@@ -35,11 +34,11 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ onPolicyAdded }) => {
     const airlineClasses = ['Economy', 'Premium Economy', 'Business', 'First'];
 
     useEffect(() => {
-        // Load policies from localStorage when component mounts
-        const savedPolicies = localStorage.getItem('travelPolicies');
-        if (savedPolicies) {
-            // You can use this if you need to do something with existing policies
-        }
+        // In artifacts, we use state instead of localStorage
+        // const savedPolicies = localStorage.getItem('travelPolicies');
+        // if (savedPolicies) {
+        //     // You can use this if you need to do something with existing policies
+        // }
     }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -72,15 +71,11 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ onPolicyAdded }) => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Get existing policies from localStorage
-        const existingPoliciesString = localStorage.getItem('travelPolicies');
-        const existingPolicies = existingPoliciesString ? JSON.parse(existingPoliciesString) : [];
-
-        // Add new policy
-        const updatedPolicies = [...existingPolicies, policyData];
-
-        // Save back to localStorage
-        localStorage.setItem('travelPolicies', JSON.stringify(updatedPolicies));
+        // In artifacts, we simulate localStorage behavior
+        // const existingPoliciesString = localStorage.getItem('travelPolicies');
+        // const existingPolicies = existingPoliciesString ? JSON.parse(existingPoliciesString) : [];
+        // const updatedPolicies = [...existingPolicies, policyData];
+        // localStorage.setItem('travelPolicies', JSON.stringify(updatedPolicies));
 
         // Clear form
         setPolicyData({
@@ -104,14 +99,14 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ onPolicyAdded }) => {
     };
 
     return (
-        <div className="container mx-auto p-4 max-w-4xl mt-10">
-            <h2 className="text-xl font-bold mb-4">Create New Travel Policy</h2>
-            <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="w-[340px] mx-auto p-4 max-w-4xl mt-10">
+             <h2 className="text-xl font-bold mb-4 text-center sm:text-left">Create New Travel Policy</h2>
+            <div className="bg-white shadow-md rounded px-4 sm:px-8 pt-6 pb-8 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2">Policy Name*</label>
                         <input
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-base"
                             name="name"
                             value={policyData.name}
                             onChange={handleChange}
@@ -122,7 +117,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ onPolicyAdded }) => {
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2">Policy Level*</label>
                         <select
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-base"
                             name="level"
                             value={policyData.level}
                             onChange={handleChange}
@@ -138,28 +133,28 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ onPolicyAdded }) => {
 
                 <div className="mb-6">
                     <label className="block text-gray-700 text-sm font-bold mb-2">Applicable Vendors*</label>
-                    <div className="flex flex-wrap gap-4">
+                    <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4">
                         {vendorTypes.map(vendor => (
                             <div key={vendor} className="flex items-center">
                                 <input
-                                    className="mr-2"
+                                    className="mr-2 w-4 h-4"
                                     type="checkbox"
                                     value={vendor}
                                     checked={policyData.applicableVendors.includes(vendor)}
                                     onChange={handleVendorChange}
                                 />
-                                <label>{vendor}</label>
+                                <label className="text-sm sm:text-base">{vendor}</label>
                             </div>
                         ))}
                     </div>
                 </div>
 
                 {policyData.applicableVendors.includes('Airline') && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
                             <label className="block text-gray-700 text-sm font-bold mb-2">Airline Class</label>
                             <select
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-base"
                                 name="airlineClass"
                                 value={policyData.airlineClass}
                                 onChange={handleChange}
@@ -173,7 +168,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ onPolicyAdded }) => {
                         <div>
                             <label className="block text-gray-700 text-sm font-bold mb-2">Max Budget for Airline</label>
                             <input
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-base"
                                 type="number"
                                 name="maxBudgetAirline"
                                 value={policyData.maxBudgetAirline}
@@ -184,11 +179,11 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ onPolicyAdded }) => {
                 )}
 
                 {policyData.applicableVendors.includes('Hotel') && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
                             <label className="block text-gray-700 text-sm font-bold mb-2">Max Star Rating for Hotel</label>
                             <select
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-base"
                                 name="maxStarHotel"
                                 value={policyData.maxStarHotel}
                                 onChange={handleChange}
@@ -203,7 +198,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ onPolicyAdded }) => {
                         <div>
                             <label className="block text-gray-700 text-sm font-bold mb-2">Max Budget for Hotel</label>
                             <input
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-base"
                                 type="number"
                                 name="maxBudgetHotel"
                                 value={policyData.maxBudgetHotel}
@@ -217,7 +212,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ onPolicyAdded }) => {
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2">Max Budget for Cab (USD)</label>
                         <input
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-base"
                             type="number"
                             name="maxBudgetCab"
                             value={policyData.maxBudgetCab}
@@ -229,7 +224,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ onPolicyAdded }) => {
                 {/* <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2">Daily Allowance (USD)</label>
                     <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-base"
                         type="number"
                         name="dailyAllowance"
                         value={policyData.dailyAllowance}
@@ -237,15 +232,16 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ onPolicyAdded }) => {
                     />
                 </div> */}
 
-                <div className="flex justify-end">
+                <div className="flex justify-center sm:justify-end">
                     <button
-                        className="bg-[#8C6D73] hover:bg-[#8C6D73]/90 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        className="bg-[#8C6D73] hover:bg-[#8C6D73]/90 text-white font-bold py-3 px-6 sm:py-2 sm:px-4 rounded focus:outline-none focus:shadow-outline w-full sm:w-auto text-base"
                         type="submit"
+                        onClick={handleSubmit}
                     >
                         Save Policy
                     </button>
                 </div>
-            </form>
+            </div>
         </div>
     );
 };

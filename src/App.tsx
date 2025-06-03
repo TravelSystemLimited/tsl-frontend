@@ -24,6 +24,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 
 import PolicyForm from "./components/PolicyForm";
 import EmployeeForm from "./components/EmployeeForm";
+import AddEmployeeAndPolicyPage from "./pages/AddEmployeeAndPolicyPage";
 
 import RequestDetailsPage from "./components/dashboard/RequestDetailsPage";
 // import ModifyBooking from "./pages/ModifyBooking";
@@ -62,6 +63,8 @@ const App = () => {
                 <Route path="add-policy" element={<PolicyForm />} />
                 <Route path="add-employee" element={<EmployeeForm />} />
                 <Route path="employees" element={<Employees />} />
+                <Route path="add" element={<AddEmployeeAndPolicyPage />} />
+                <Route path="employee-booking" element={<FlightBooking />} />
               </Route>
 
               {/* Fallback */}
@@ -69,6 +72,9 @@ const App = () => {
             </Routes>
           </BrowserRouter>
         </ThemeProvider>
+      
+
+     
       </TooltipProvider>
     </QueryClientProvider>
   );

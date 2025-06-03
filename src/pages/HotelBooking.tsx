@@ -132,4 +132,4 @@ const navigate=useNavigate();
   );
 };
 
-export default HotelBooking;
+export default HotelBooking;  
