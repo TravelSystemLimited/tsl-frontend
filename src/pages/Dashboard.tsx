@@ -30,7 +30,7 @@ const Dashboard = () => {
           
         </div>
 {/* Hero Image Banner */}
-<Card className="bg-[#e5e5e5] border-none overflow-hidden">
+<Card className="bg-[#e5e5e5] hidden md:block border-none overflow-hidden">
   <CardContent className="p-8">
     <div className="flex flex-col md:flex-row items-center justify-between">
       <div className="text-[#3b3b3b] mb-4 md:mb-0 order-1 md:order-none">

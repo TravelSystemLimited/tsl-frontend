@@ -205,6 +205,9 @@ export const PendingRequestsSection: React.FC<PendingRequestsSectionProps> = ({ 
   const [selectedRequest, setSelectedRequest] = useState<PendingRequest | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const navigate = useNavigate();
+useEffect(() => {
+  sessionStorage.setItem('pendingRequestsCount', requests.length.toString());
+}, [requests]);
 
   // Listen for request status changes from the details page
   useEffect(() => {
@@ -422,58 +425,70 @@ export const PendingRequestsSection: React.FC<PendingRequestsSectionProps> = ({ 
 
   return (
     <>
-      <Card className="bg-white border-none shadow-md">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-xl text-[#8C6D73]">
-            <Clock className="h-5 w-5 " />
-            Pending Requests
-          </CardTitle>
-          <CardDescription>
-            {requests.length} requests awaiting your approval
-          </CardDescription>
-        </CardHeader>
-        <CardContent className='p-2'>
-          <div className="space-y-4">
-            {displayRequests.map((request) => (
-              <div
-                key={request.id}
-                onClick={()=>{ handleRequestClick(request)}}
-                className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-[#8C6D73] bg-opacity-10 rounded-full">
-                    {getRequestIcon(request.requestType)}
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-gray-900">{request.employeeName}</h4>
-                    <p className="text-sm text-gray-500">{request.destination}</p>
-                    <p className="text-xs text-gray-400">{request.departureDate} - {request.returnDate}</p>
-                  </div>
-                </div>
-                 <div className="text-right">
-                  <Badge className={getPriorityColor(request.priority)}>
-                    {request.priority}
-                  </Badge>
-               <p className="text-sm font-medium text-gray-900 mt-1">
-  ₹
-  {
-    (request.bookingDetails?.flight?.price ?? 0) +
-    (request.bookingDetails?.hotel?.price ?? 0) +
-    (request.bookingDetails?.cab?.price ?? 0)
-  }
-</p>
-                </div>
-              </div>
-              
-            ))}
-            {!expanded && requests.length > 3 && (
-              <p className="text-center text-sm text-gray-500 mt-4">
-                +{requests.length - 3} more requests
-              </p>
-            )}
+<Card className="bg-white border-none shadow-md">
+  <CardHeader>
+    <CardTitle className="flex items-center gap-2 text-xl text-[#8C6D73]">
+      <Clock className="h-5 w-5" />
+      Pending Requests
+    </CardTitle>
+    <CardDescription>
+      {requests.length} requests awaiting your approval
+    </CardDescription>
+  </CardHeader>
+  <CardContent className="p-2">
+    <div className="space-y-4">
+      {displayRequests.map((request) => (
+        <div
+          key={request.id}
+          onClick={() => { handleRequestClick(request) }}
+          className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors relative"
+        >
+          {/* Priority Badge - Top Right in Mobile */}
+          <div className="absolute top-3 right-3 sm:relative sm:top-auto sm:right-auto sm:ml-2 sm:mb-1">
+            <Badge className={getPriorityColor(request.priority)}>
+              {request.priority}
+            </Badge>
           </div>
-        </CardContent>
-      </Card>
+
+          <div className="flex items-start gap-3 w-full sm:w-auto mt-1 sm:mt-0">
+            <div className="p-2 bg-[#8C6D73] bg-opacity-10 rounded-full">
+              {getRequestIcon(request.requestType)}
+            </div>
+            <div className="flex-1 sm:flex-none pr-6 sm:pr-0">
+              <h4 className="font-medium text-gray-900">{request.employeeName}</h4>
+              <p className="text-sm text-gray-500 line-clamp-1">{request.destination}</p>
+              <div className="flex flex-wrap gap-x-2 gap-y-0.5 mt-1">
+                <span className="text-xs text-gray-400 whitespace-nowrap">
+                  {request.departureDate}
+                </span>
+                <span className="text-xs text-gray-400">-</span>
+                <span className="text-xs text-gray-400 whitespace-nowrap">
+                  {request.returnDate}
+                </span>
+              </div>
+            </div>
+          </div>
+          {/* Price - Right aligned in both mobile and desktop */}
+          <div className="self-end sm:self-auto mt-2 sm:mt-0">
+            <p className="text-sm font-medium text-gray-900">
+              ₹
+              {
+                (request.bookingDetails?.flight?.price ?? 0) +
+                (request.bookingDetails?.hotel?.price ?? 0) +
+                (request.bookingDetails?.cab?.price ?? 0)
+              }
+            </p>
+          </div>
+        </div>
+      ))}
+      {!expanded && requests.length > 3 && (
+        <p className="text-center text-sm text-gray-500 mt-4">
+          +{requests.length - 3} more requests
+        </p>
+      )}
+    </div>
+  </CardContent>
+</Card>
 
 
    

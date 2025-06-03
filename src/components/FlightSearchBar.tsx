@@ -357,6 +357,7 @@ const selectDestination = (place: typeof mockPlaces[0]) => {
       value={formatDateForInput(returnDate)}
       onChange={handleReturnDateChange}
       min={formatDateForInput(departDate) || formatDateForInput(new Date())}
+  
       className="p-3 border rounded w-full text-sm"
       style={{
         minHeight: '48px',
