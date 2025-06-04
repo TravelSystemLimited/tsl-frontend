@@ -32,33 +32,7 @@ import { useEffect } from "react";
 const queryClient = new QueryClient();
 
 const App = () => {
-  useEffect(() => {
-    const preventZoom = (e) => {
-      // Prevent zoom via Ctrl + mouse wheel
-      if (e.ctrlKey || e.metaKey) {
-        e.preventDefault();
-      }
-    };
 
-    const preventKeyZoom = (e) => {
-      // Prevent Ctrl + '+' / '-' or '='
-      if (
-        (e.ctrlKey || e.metaKey) &&
-        (e.key === "+" || e.key === "-" || e.key === "=")
-      ) {
-        e.preventDefault();
-      }
-    };
-
-    // Attach event listeners
-    window.addEventListener("wheel", preventZoom, { passive: false });
-    window.addEventListener("keydown", preventKeyZoom);
-
-    return () => {
-      window.removeEventListener("wheel", preventZoom);
-      window.removeEventListener("keydown", preventKeyZoom);
-    };
-  }, []);
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
