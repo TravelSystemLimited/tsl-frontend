@@ -30,24 +30,64 @@ useEffect(() => {
   if (flightData) {
     try {
       const flight = JSON.parse(flightData);
-       if (flight.to) {
-          setLocation(flight.to);
-        }
-      if (flight.departureDate) {
-        const parsedDate = safeParseDate(flight.departureDate);
-        if (parsedDate) {
-          const normalized = normalizeDate(parsedDate);
-          setCheckIn(normalized);
-          
-          // Set check-out to next day if not provided
-          
-        }
+      if (flight.to) {
+        setLocation(flight.to);
       }
 
-      if (flight.arrivalDate) {
-        const parsedDate = safeParseDate(flight.arrivalDate);
-        if (parsedDate) {
-          setCheckOut(normalizeDate(parsedDate));
+      if (flight.departureDate) {
+        // Bulletproof date parser that maintains exact date
+        const parseDateAbsolutely = (dateString: string) => {
+          // First normalize all separators to slashes
+          const normalized = dateString.replace(/[-/]/g, '/');
+          
+          // Split and ensure we have exactly 3 parts
+          const parts = normalized.split('/');
+          if (parts.length !== 3) return null;
+          
+          // Convert all parts to numbers
+          const numbers = parts.map(Number);
+          
+          // Determine format (DD/MM/YYYY vs MM/DD/YYYY)
+          const isDayFirst = numbers[0] <= 31 && numbers[1] <= 12;
+          const isMonthFirst = numbers[1] <= 31 && numbers[0] <= 12;
+          
+          let day, month, year;
+          
+          if (isDayFirst && !isMonthFirst) {
+            // Definitely DD/MM/YYYY
+            [day, month, year] = numbers;
+          } else if (!isDayFirst && isMonthFirst) {
+            // Definitely MM/DD/YYYY
+            [month, day, year] = numbers;
+          } else {
+            // Ambiguous - use locale preference (Europe vs US)
+            const prefersDayFirst = Intl.DateTimeFormat().resolvedOptions().locale.startsWith('en-US') ? false : true;
+            [day, month, year] = prefersDayFirst ? numbers : [numbers[1], numbers[0], numbers[2]];
+          }
+          
+          // Create date in UTC to avoid timezone issues
+          return new Date(Date.UTC(year, month - 1, day, 12, 0, 0)); // Noon UTC avoids DST issues
+        };
+
+        const parsedDate = parseDateAbsolutely(flight.departureDate);
+        
+        if (parsedDate && !isNaN(parsedDate.getTime())) {
+          // Format for display (using UTC methods to avoid timezone shifts)
+          const utcDay = parsedDate.getUTCDate();
+          const utcMonth = parsedDate.getUTCMonth() + 1;
+          const utcYear = parsedDate.getUTCFullYear();
+          const formattedDate = `${String(utcDay).padStart(2, '0')}/${String(utcMonth).padStart(2, '0')}/${utcYear}`;
+          
+          setCheckIn(parsedDate);
+          
+          // Set check-out to next day (using UTC)
+          const nextDay = new Date(parsedDate);
+          nextDay.setUTCDate(parsedDate.getUTCDate() + 1);
+          setCheckOut(nextDay);
+          
+          console.log('Original:', flight.departureDate);
+          console.log('Parsed UTC:', parsedDate.toISOString());
+          console.log('Formatted:', formattedDate);
         }
       }
     } catch (error) {
@@ -55,16 +95,6 @@ useEffect(() => {
     }
   }
 }, []);
-
-  const formatDateForDisplay = (date: Date | null) => {
-    if (!date) return '';
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
-
   const formatDateForInput = (date: Date | null) => {
     if (!date) return '';
     return date.toISOString().split('T')[0];

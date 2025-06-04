@@ -5,13 +5,7 @@ import React, { useEffect, useState } from 'react';
 
 const CabBookingForm: React.FC = () => {
      const { selectedDestination } = useFlightStore();
-     const addOneHour = (timeStr: string) => {
-  const [hours, minutes] = timeStr.split(":").map(Number);
-  const date = new Date();
-  date.setHours(hours + 1);
-  date.setMinutes(minutes);
-  return date.toTimeString().slice(0, 5); // Return in "HH:MM" format
-};
+   
 
 const storedHotel = sessionStorage.getItem("selectedHotel");
 const storedFlight = sessionStorage.getItem("selectedFlight");
@@ -24,6 +18,7 @@ const [from, setFrom] = useState("");
 const [to, setTo] = useState("");
 const [pickupDate, setPickupDate] = useState("");
 const [pickupTime, setPickupTime] = useState("");
+const [initialValuesSet, setInitialValuesSet] = useState(false);
 const formatDepartureDate = (dateStr: string): string => {
   const [day, monthShort] = dateStr.split(" ");
   const monthMap: { [key: string]: string } = {
@@ -47,30 +42,106 @@ const formatDepartureDate = (dateStr: string): string => {
 };
 const formatDateForInput = (date: string | Date | null) => {
   if (!date) return '';
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
-  return dateObj.toISOString().split('T')[0];
+  
+  let dateObj;
+  if (typeof date === 'string') {
+    // For string dates, parse directly to local date components
+    const [month, day, year] = date.split('/').map(Number);
+    dateObj = new Date(year, month - 1, day);
+  } else {
+    dateObj = date;
+  }
+  
+  // Format as yyyy-mm-dd using local date components
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  
+  return `${year}-${month}-${day}`;
 };
-const parseMMDDYYYY = (str: string): Date => {
-  const [month, day, year] = str.split('/').map(Number);
-  return new Date(year, month - 1, day+1); // JS months are 0-indexed
-};
+
+ const addOneHour = (timeStr: string) => {
+    const [hours, minutes] = timeStr.split(":").map(Number);
+    const date = new Date();
+    date.setHours(hours + 1);
+    date.setMinutes(minutes);
+    return date.toTimeString().slice(0, 5); // Return in "HH:MM" format
+  };
+
 useEffect(() => {
-  if (parsedFlight ) {
+  if (parsedFlight && !initialValuesSet) {
     setFrom(parsedFlight.to);
-    if(parsedHotel){
-    setTo(parsedHotel.name);
-    }else{
-      setTo("Airport Bus stop")
+    setTo(parsedHotel ? parsedHotel.name : "Airport Bus stop");
+
+    // Handle departure date parsing
+    if (parsedFlight.departureDate) {
+      // Bulletproof date parser
+      const parseFlightDate = (dateString: string) => {
+        // First normalize all separators to slashes
+        const normalized = dateString.replace(/[-/]/g, '/');
+        
+        // Split and ensure we have exactly 3 parts
+        const parts = normalized.split('/');
+        if (parts.length !== 3) return null;
+        
+        // Convert all parts to numbers
+        const [part1, part2, part3] = parts.map(Number);
+        
+        // Determine format - we know flight dates are typically DD/MM/YYYY or MM/DD/YYYY
+        const isDayFirst = part1 <= 31 && part2 <= 12;  // DD/MM
+        const isMonthFirst = part1 <= 12 && part2 <= 31;  // MM/DD
+        
+        let day, month, year;
+        
+        if (isDayFirst && !isMonthFirst) {
+          // Definitely DD/MM/YYYY
+          [day, month, year] = [part1, part2, part3];
+        } else if (!isDayFirst && isMonthFirst) {
+          // Definitely MM/DD/YYYY
+          [month, day, year] = [part1, part2, part3];
+        } else {
+          // Ambiguous case (like 01/01/2025) - assume DD/MM/YYYY for flights
+          [day, month, year] = [part1, part2, part3];
+        }
+        
+        // Handle 2-digit years
+        if (year < 100) {
+          year = 2000 + year;
+        }
+        
+        // Create date in local time (no timezone conversion)
+        return new Date(year, month - 1, day);
+      };
+
+      const parsedDate = parseFlightDate(parsedFlight.departureDate);
+      
+      if (parsedDate && !isNaN(parsedDate.getTime())) {
+        // Format for input (YYYY-MM-DD)
+        const year = parsedDate.getFullYear();
+        const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
+        const day = String(parsedDate.getDate()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
+        
+        setPickupDate(formattedDate);
+        
+        console.log('Original flight date:', parsedFlight.departureDate);
+        console.log('Parsed date:', parsedDate);
+        console.log('Formatted for input:', formattedDate);
+      } else {
+        console.error('Failed to parse flight date:', parsedFlight.departureDate);
+      }
     }
 
-    // Format the departure date to yyyy-mm-dd (HTML date input format)
-  
-
-   setPickupDate(formatDateForInput(parseMMDDYYYY(parsedFlight.departureDate)));
-
+    // Handle arrival time
     setPickupTime(addOneHour(parsedFlight.arrivalTime));
   }
-}, [parsedFlight, parsedHotel]);
+}, [ ]);
+
+// If you still need the Date object for other purposes, use this version:
+
+// Debug function to test consistency
+
+
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -141,6 +212,7 @@ useEffect(() => {
         </div>
 
         {/* Pick-up Date */}
+         {/* Pick-up Date */}
         <div className="flex flex-col">
           <label className="text-xs text-gray-500 mb-1">PICK-UP DATE</label>
           <input
@@ -153,7 +225,7 @@ useEffect(() => {
         </div>
 
         {/* Pick-up Time */}
-        <div className="flex flex-col">
+       <div className="flex flex-col">
           <label className="text-xs text-gray-500 mb-1">PICK-UP TIME</label>
           <input
             type="time"
