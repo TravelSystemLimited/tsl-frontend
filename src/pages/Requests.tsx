@@ -14,7 +14,7 @@ const Requests = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#f8f7f7] mt-8 w-[393px] md:w-full p-[10px] md:p-6">
+    <div className="min-h-screen bg-[#f8f7f7] mt-8 w-[343px] md:w-full p-[10px] md:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
            {/* Pending Requests Section */}
     
