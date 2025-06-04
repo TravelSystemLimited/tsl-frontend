@@ -257,9 +257,9 @@ const handleEmployeeChange = (value: string) => {
 
       {/* Employee dropdown - only show on employee-booking route */}
       {isEmployeeBookingRoute && (
-  <div className="px-4 pt-2 pb-1">
+  <div className="  flex justify-end ">
     <Select onValueChange={handleEmployeeChange}>  {/* Use handleEmployeeChange here */}
-      <SelectTrigger className="w-[300px]">
+      <SelectTrigger className="w-full pl-7 rounded-none border-b-1 shadow-inner border-t-0 border-l-0 border-r-0 border-gray-200 ">
         <SelectValue placeholder="Select an employee" />
       </SelectTrigger>
       <SelectContent>
@@ -279,7 +279,7 @@ const handleEmployeeChange = (value: string) => {
         /* Flight results */
         <div className="mt-8 pb-9">
           <h2 className="text-sm md:text-lg text-gray-700 font-semibold mb-4 ml-4">
-            Flights from {searchParams.from || flights[0]?.from} to {searchParams.to || flights[0]?.to}
+            Flights from {searchParams.from || flights[0]?.from } to {searchParams.to || flights[0]?.to}
           </h2>
           <div className="grid gap-6 p-3 sm:grid-cols-2 lg:grid-cols-2 text-center">
             {flights.map((flight, index) => (

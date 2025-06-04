@@ -1,3 +1,4 @@
+import { normalizeDate, safeParseDate } from '@/Utils/dateUtils';
 import { Search, Calendar, Users, MapPin } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 
@@ -23,54 +24,103 @@ const HotelSearchBar: React.FC<HotelSearchBarProps> = ({ onSearch }) => {
   const [rooms, setRooms] = useState<number>(1);
 
 
-  useEffect(() => {
-    // Load flight data from sessionStorage when component mounts
-    const flightData = sessionStorage.getItem('selectedFlight');
-    if (flightData) {
-      try {
-        const flight = JSON.parse(flightData);
-        if (flight.to) {
-          setLocation(flight.to);
-        }
-        if (flight.departureDate) {
-        
-         setCheckIn(new Date(flight.departureDate));
-        }
-        if (flight.arrivalDate) {
-           setCheckOut(new Date(flight.arrivalDate));
-        }
-      } catch (error) {
-        console.error('Error parsing flight data:', error);
-      }
-    }
-  }, []);
-  const formatDateForDisplay = (date: Date | null) => {
-    if (!date) return '';
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
 
+useEffect(() => {
+  const flightData = sessionStorage.getItem('selectedFlight');
+  if (flightData) {
+    try {
+      const flight = JSON.parse(flightData);
+      if (flight.to) {
+        setLocation(flight.to);
+      }
+
+      if (flight.departureDate) {
+        // Bulletproof date parser that maintains exact date
+        const parseDateAbsolutely = (dateString: string) => {
+          // First normalize all separators to slashes
+          const normalized = dateString.replace(/[-/]/g, '/');
+          
+          // Split and ensure we have exactly 3 parts
+          const parts = normalized.split('/');
+          if (parts.length !== 3) return null;
+          
+          // Convert all parts to numbers
+          const numbers = parts.map(Number);
+          
+          // Determine format (DD/MM/YYYY vs MM/DD/YYYY)
+          const isDayFirst = numbers[0] <= 31 && numbers[1] <= 12;
+          const isMonthFirst = numbers[1] <= 31 && numbers[0] <= 12;
+          
+          let day, month, year;
+          
+          if (isDayFirst && !isMonthFirst) {
+            // Definitely DD/MM/YYYY
+            [day, month, year] = numbers;
+          } else if (!isDayFirst && isMonthFirst) {
+            // Definitely MM/DD/YYYY
+            [month, day, year] = numbers;
+          } else {
+            // Ambiguous - use locale preference (Europe vs US)
+            const prefersDayFirst = Intl.DateTimeFormat().resolvedOptions().locale.startsWith('en-US') ? false : true;
+            [day, month, year] = prefersDayFirst ? numbers : [numbers[1], numbers[0], numbers[2]];
+          }
+          
+          // Create date in UTC to avoid timezone issues
+          return new Date(Date.UTC(year, month - 1, day, 12, 0, 0)); // Noon UTC avoids DST issues
+        };
+
+        const parsedDate = parseDateAbsolutely(flight.departureDate);
+        
+        if (parsedDate && !isNaN(parsedDate.getTime())) {
+          // Format for display (using UTC methods to avoid timezone shifts)
+          const utcDay = parsedDate.getUTCDate();
+          const utcMonth = parsedDate.getUTCMonth() + 1;
+          const utcYear = parsedDate.getUTCFullYear();
+          const formattedDate = `${String(utcDay).padStart(2, '0')}/${String(utcMonth).padStart(2, '0')}/${utcYear}`;
+          
+          setCheckIn(parsedDate);
+          
+          // Set check-out to next day (using UTC)
+          const nextDay = new Date(parsedDate);
+          nextDay.setUTCDate(parsedDate.getUTCDate() + 1);
+          setCheckOut(nextDay);
+          
+          console.log('Original:', flight.departureDate);
+          console.log('Parsed UTC:', parsedDate.toISOString());
+          console.log('Formatted:', formattedDate);
+        }
+      }
+    } catch (error) {
+      console.error('Error parsing flight data:', error);
+    }
+  }
+}, []);
   const formatDateForInput = (date: Date | null) => {
     if (!date) return '';
     return date.toISOString().split('T')[0];
   };
 
-  const handleCheckInChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newDate = new Date(e.target.value);
-    setCheckIn(newDate);
-    if (checkOut && newDate >= checkOut) {
-      const newCheckOut = new Date(newDate);
-      newCheckOut.setDate(newCheckOut.getDate() + 1);
-      setCheckOut(newCheckOut);
+const handleCheckInChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const newDate = safeParseDate(e.target.value);
+  if (newDate) {
+    const normalized = normalizeDate(newDate);
+    setCheckIn(normalized);
+    
+    // Ensure check-out is after check-in
+    if (!checkOut || normalized >= checkOut) {
+      const nextDay = new Date(normalized);
+      nextDay.setDate(nextDay.getDate() + 1);
+      setCheckOut(normalizeDate(nextDay));
     }
-  };
+  }
+};
 
- const handleCheckOutChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCheckOut(new Date(e.target.value));
-  };
+const handleCheckOutChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const newDate = safeParseDate(e.target.value);
+  if (newDate) {
+    setCheckOut(normalizeDate(newDate));
+  }
+};
 
   const handleSearch = () => {
     const searchParams = {
@@ -108,36 +158,34 @@ const HotelSearchBar: React.FC<HotelSearchBarProps> = ({ onSearch }) => {
           </div>
 
           {/* Check-in and Check-out */}
-          <div className="flex gap-2 mb-4 w-full">
-        <div className="flex-1">
-          <div className="relative">
-         
-           <input
-                  type="date"
-                  value={formatDateForInput(checkIn)}
-                  onChange={handleCheckInChange}
-                  min={formatDateForInput(new Date())}
-                  placeholder="Select date"
-                  className="w-full pl-2  py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-          
-          </div>
-        </div>
-        <div className="flex-1">
-          <div className="relative">
-        
-             <input
-                  type="date"
-                  value={formatDateForInput(checkOut)}
-                  onChange={handleCheckOutChange}
-                  min={formatDateForInput(checkIn) || formatDateForInput(new Date())}
-                  placeholder="Select date"
-                  className="w-full pl-2  py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
+        {/* Check-in and Check-out */}
+<div className="flex gap-2 mb-4 w-full">
+  <div className="flex-1">
+    <div className="relative">
+      <input
+        type="date"
+        value={formatDateForInput(checkIn)}
+        onChange={handleCheckInChange}
+        min={formatDateForInput(new Date())}
+        placeholder="Select date"
+        className="w-full pl-2  py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      />
+    </div>
+  </div>
+  <div className="flex-1">
+    <div className="relative">
+      <input
+        type="date"
+        value={formatDateForInput(checkOut)}
+        onChange={handleCheckOutChange}
+        min={formatDateForInput(checkIn) || formatDateForInput(new Date())}
+        placeholder="Select date"
+        className="w-full pl-2 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      />
+    </div>
+  </div>
+</div>
 
-          </div>
-        </div>
-      </div>
       
           {/* Hotel Class Selector */}
           <div className="mb-6">
@@ -305,71 +353,34 @@ const HotelSearchBar: React.FC<HotelSearchBarProps> = ({ onSearch }) => {
           </div>
         </div>
       </div>
-     <style>{`
-        .date-input-custom::-webkit-calendar-picker-indicator {
+    <style>{`
+        /* Custom date input styling */
+        input[type="date"] {
+          -webkit-appearance: none;
+          -moz-appearance: textfield;
+          appearance: none;
+          background-color: white;
+          background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23666'%3e%3cpath fill-rule='evenodd' d='M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z' clip-rule='evenodd'/%3e%3c/svg%3e");
+          background-repeat: no-repeat;
+          background-position: right 0.75rem center;
+          background-size: 1rem;
+          padding-right: 2.5rem;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
           opacity: 0;
           position: absolute;
-          right: 10px;
+          right: 0;
           width: 20px;
           height: 20px;
           cursor: pointer;
         }
-        
-        .date-input-custom::-webkit-datetime-edit-text {
-          opacity: 0;
-        }
-        
-        .date-input-custom::-webkit-datetime-edit-month-field {
-          opacity: 0;
-        }
-        
-        .date-input-custom::-webkit-datetime-edit-day-field {
-          opacity: 0;
-        }
-        
-        .date-input-custom::-webkit-datetime-edit-year-field {
-          opacity: 0;
-        }
-        
-        .date-input-custom::before {
-          content: attr(data-placeholder);
-          position: absolute;
-          left: 0;
-          top: 0;
-          right: 0;
-          bottom: 0;
-          display: flex;
-          align-items: center;
-          padding-left: 2.5rem;
-          color: #6b7280;
-          pointer-events: none;
-        }
-        
-        /* Firefox */
-        .date-input-custom::-moz-placeholder {
-          opacity: 0;
-        }
-        
-        /* Alternative approach for better cross-browser support */
-        .date-input-custom {
-          color: transparent;
-          background: white;
-        }
-        
-        .date-input-custom:focus {
-          color: #374151;
-        }
-        
-        .date-input-custom:not(:focus):not(:placeholder-shown) {
-          color: transparent;
-        }
-        
-        .date-input-custom:focus::-webkit-datetime-edit-text,
-        .date-input-custom:focus::-webkit-datetime-edit-month-field,
-        .date-input-custom:focus::-webkit-datetime-edit-day-field,
-        .date-input-custom:focus::-webkit-datetime-edit-year-field {
-          opacity: 1;
-          color: #374151;
+
+        /* Ensure consistent font size on mobile to prevent zoom */
+        @media (max-width: 768px) {
+          input[type="date"] {
+            font-size: 16px;
+          }
         }
       `}</style>
     </div>

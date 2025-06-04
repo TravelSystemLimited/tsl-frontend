@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { RiArrowDropDownLine } from "react-icons/ri";
 
 type PlaceOption = {
   label: string;
@@ -26,81 +25,39 @@ interface FlightSearchBarProps {
 const FlightSearchBar: React.FC<FlightSearchBarProps> = ({ onSearch }) => {
   const [source, setSource] = useState<PlaceOption | null>(null);
   const [destination, setDestination] = useState<PlaceOption | null>(null);
-  const [departDate, setDepartDate] = useState<Date | null>(new Date());
-  const [returnDate, setReturnDate] = useState<Date | null>(() => {
-    const date = new Date();
-    date.setDate(date.getDate() + 7);
-    return date;
-  });
+  const [departDate, setDepartDate] = useState<Date | null>();
+  const [returnDate, setReturnDate] = useState<Date | null>();
   const [flightClass, setFlightClass] = useState<string>('Economy');
-const isSearchDisabled = () => {
-  return !source || !destination || !departDate || 
-         (tripType === "roundTrip" && !returnDate);
-};
-const handleDepartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const newDate = new Date(e.target.value);
-  setDepartDate(newDate);
-  sessionStorage.setItem("departureDate", e.target.value);
+
+  const isSearchDisabled = () => {
+    return !source || !destination || !departDate;
+  };
   
-  // If return date is before the new depart date, update return date too
-  if (returnDate && newDate > returnDate) {
-    const newReturnDate = new Date(newDate);
-    newReturnDate.setDate(newReturnDate.getDate() + 1);
-    setReturnDate(newReturnDate);
-    sessionStorage.setItem("returnDate", formatDateForInput(newReturnDate));
-  }
-};
-const [tripType, setTripType] = useState<"roundTrip" | "oneWay">("roundTrip");
-const tripOptions = [
-  { label: "Round Trip", value: "roundTrip" },
-  { label: "One Way", value: "oneWay" }
-];
+  const from = sessionStorage.getItem('source') || '';
+    const to = sessionStorage.getItem('destination') || '';
+    const departureDate = sessionStorage.getItem('departureDate');
 
-
-const handleReturnDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const newDate = new Date(e.target.value);
-  setReturnDate(newDate);
-  sessionStorage.setItem("returnDate", e.target.value);
-};
-
-useEffect(() => {
-  // Load saved values from sessionStorage
-  const savedSource = sessionStorage.getItem('source');
-  const savedDestination = sessionStorage.getItem('destination');
-  const savedDepartDate = sessionStorage.getItem('departureDate');
-  const savedReturnDate = sessionStorage.getItem('returnDate');
-  
-  if (savedSource) {
-    setSourceInput(savedSource);
-    const sourceData = sessionStorage.getItem('sourceData');
-    if (sourceData) {
-      setSource(JSON.parse(sourceData));
+  const handleDepartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newDate = new Date(e.target.value);
+    setDepartDate(newDate);
+    
+    // If return date is before the new depart date, update return date too
+    if (returnDate && newDate > returnDate) {
+      const newReturnDate = new Date(newDate);
+      newReturnDate.setDate(newReturnDate.getDate() + 1);
+      setReturnDate(newReturnDate);
     }
-  }
-  
-  if (savedDestination) {
-    setDestinationInput(savedDestination);
-    const destinationData = sessionStorage.getItem('destinationData');
-    if (destinationData) {
-      setDestination(JSON.parse(destinationData));
-    }
-  }
-  
-  if (savedDepartDate) {
-    setDepartDate(new Date(savedDepartDate));
-  }
-  
-  if (savedReturnDate) {
-    setReturnDate(new Date(savedReturnDate));
-  } else if (savedDepartDate) {
-    // If no return date but we have depart date, set return date to 7 days later
-    const date = new Date(savedDepartDate);
-    date.setDate(date.getDate() + 7);
-    setReturnDate(date);
-  }
-}, []);
+  };
 
+  const [tripType, setTripType] = useState<"oneWay">("oneWay");
+  const tripOptions = [
+    { label: "One Way", value: "oneWay" }
+  ];
 
+  const handleReturnDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newDate = new Date(e.target.value);
+    setReturnDate(newDate);
+  };
 
   const handleSearch = () => {
     onSearch({
@@ -112,19 +69,15 @@ useEffect(() => {
     });
   };
 
-const handleClearSource = () => {
-  setSource(null);
-  setSourceInput('');
-  sessionStorage.removeItem('source');
-  sessionStorage.removeItem('sourceData');
-};
+  const handleClearSource = () => {
+    setSource(null);
+    setSourceInput('');
+  };
 
-const handleClearDestination = () => {
-  setDestination(null);
-  setDestinationInput('');
-  sessionStorage.removeItem('destination');
-  sessionStorage.removeItem('destinationData');
-};
+  const handleClearDestination = () => {
+    setDestination(null);
+    setDestinationInput('');
+  };
 
   const formatDateForInput = (date: Date | null) => {
     if (!date) return '';
@@ -160,63 +113,54 @@ const handleClearDestination = () => {
   const [showDestinationSuggestions, setShowDestinationSuggestions] = useState(false);
 
   const handleSourceInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const value = e.target.value;
-  setSourceInput(value);
-  setShowSourceSuggestions(value.length > 0);
-  if (!value) setSource(null);
-  // Removed the sessionStorage.setItem from here
-};
-
-const handleDestinationInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const value = e.target.value;
-  setDestinationInput(value);
-  setShowDestinationSuggestions(value.length > 0);
-  if (!value) setDestination(null);
-  // Removed the sessionStorage.setItem from here
-};
-
-const selectSource = (place: typeof mockPlaces[0]) => {
-  const selectedOption = {
-    label: place.fullName,
-    value: {
-      description: place.fullName,
-      place_id: place.name.toLowerCase(),
-      structured_formatting: {
-        main_text: place.name,
-        secondary_text: place.fullName.replace(`${place.name}, `, '')
-      }
-    }
+    const value = e.target.value;
+    setSourceInput(value);
+    setShowSourceSuggestions(value.length > 0);
+    if (!value) setSource(null);
   };
-  setSource(selectedOption);
-  setSourceInput(place.fullName);
-  setShowSourceSuggestions(false);
-  // Save the full selected value
-  sessionStorage.setItem('source', place.fullName);
-  // You might also want to save the structured data if you need it later
-  sessionStorage.setItem('sourceData', JSON.stringify(selectedOption));
-};
-const [showTripDropdown, setShowTripDropdown] = useState(false);
 
-const selectDestination = (place: typeof mockPlaces[0]) => {
-  const selectedOption = {
-    label: place.fullName,
-    value: {
-      description: place.fullName,
-      place_id: place.name.toLowerCase(),
-      structured_formatting: {
-        main_text: place.name,
-        secondary_text: place.fullName.replace(`${place.name}, `, '')
-      }
-    }
+  const handleDestinationInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setDestinationInput(value);
+    setShowDestinationSuggestions(value.length > 0);
+    if (!value) setDestination(null);
   };
-  setDestination(selectedOption);
-  setDestinationInput(place.fullName);
-  setShowDestinationSuggestions(false);
-  // Save the full selected value
-  sessionStorage.setItem('destination', place.fullName);
-  // You might also want to save the structured data if you need it later
-  sessionStorage.setItem('destinationData', JSON.stringify(selectedOption));
-};
+
+  const selectSource = (place: typeof mockPlaces[0]) => {
+    const selectedOption = {
+      label: place.fullName,
+      value: {
+        description: place.fullName,
+        place_id: place.name.toLowerCase(),
+        structured_formatting: {
+          main_text: place.name,
+          secondary_text: place.fullName.replace(`${place.name}, `, '')
+        }
+      }
+    };
+    setSource(selectedOption);
+    setSourceInput(place.fullName);
+    setShowSourceSuggestions(false);
+  };
+
+  const [showTripDropdown, setShowTripDropdown] = useState(false);
+
+  const selectDestination = (place: typeof mockPlaces[0]) => {
+    const selectedOption = {
+      label: place.fullName,
+      value: {
+        description: place.fullName,
+        place_id: place.name.toLowerCase(),
+        structured_formatting: {
+          main_text: place.name,
+          secondary_text: place.fullName.replace(`${place.name}, `, '')
+        }
+      }
+    };
+    setDestination(selectedOption);
+    setDestinationInput(place.fullName);
+    setShowDestinationSuggestions(false);
+  };
 
   const filteredSourcePlaces = mockPlaces.filter(place => 
     place.name.toLowerCase().includes(sourceInput.toLowerCase()) ||
@@ -230,38 +174,59 @@ const selectDestination = (place: typeof mockPlaces[0]) => {
 
   return (
     <div className="flex flex-col md:flex-row items-center gap-3 p-4 bg-white shadow w-full mx-auto">
+      <style>{`
+        /* Custom date input styling */
+        input[type="date"] {
+          -webkit-appearance: none;
+          -moz-appearance: textfield;
+          appearance: none;
+          background-color: white;
+          background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23666'%3e%3cpath fill-rule='evenodd' d='M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z' clip-rule='evenodd'/%3e%3c/svg%3e");
+          background-repeat: no-repeat;
+          background-position: right 0.75rem center;
+          background-size: 1rem;
+          padding-right: 2.5rem;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+          opacity: 0;
+          position: absolute;
+          right: 0;
+          width: 20px;
+          height: 20px;
+          cursor: pointer;
+        }
+
+        /* Ensure consistent font size on mobile to prevent zoom */
+        @media (max-width: 768px) {
+          input[type="date"] {
+            font-size: 16px;
+          }
+        }
+      `}</style>
+
       {/* Mobile Layout */}
       <div className="md:hidden w-full space-y-3">
-  {/* Source and Destination Row */}
-  <div className="flex gap-5 relative">
-    <div className="flex-1 relative">
-      <div className="relative">
-        <input
-          type="text"
-          value={sourceInput}
-          onChange={handleSourceInputChange}
-          onFocus={() => setShowSourceSuggestions(sourceInput.length > 0)}
-          onBlur={() => setTimeout(() => setShowSourceSuggestions(false), 150)}
-          placeholder="Source"
-          className="p-3 border rounded w-full text-sm pr-4"  // Added pr-10 for padding
-          style={{
-            minHeight: '48px',
-            border: '1px solid #d1d5db',
-            borderRadius: '0.375rem',
-            boxShadow: 'none'
-          }}
-        />
-              {/* {source && (
-                <button
-                  onClick={() => {
-                    handleClearSource();
-                    setSourceInput('');
-                  }}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  ✕
-                </button>
-              )} */}
+        {/* Source and Destination Row */}
+        <div className="flex gap-5 relative">
+          <div className="flex-1 relative">
+            <div className="relative">
+              <input
+                type="text"
+                value={sourceInput}
+                onChange={handleSourceInputChange}
+                onFocus={() => setShowSourceSuggestions(sourceInput.length > 0)}
+                onBlur={() => setTimeout(() => setShowSourceSuggestions(false), 150)}
+                placeholder="Source"
+                className="p-3 border rounded w-full text-sm pr-4"
+                style={{
+                  minHeight: '48px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.375rem',
+                  boxShadow: 'none',
+                  fontSize: '16px' // Prevent zoom on iOS
+                }}
+              />
               {showSourceSuggestions && filteredSourcePlaces.length > 0 && (
                 <div className="absolute z-10 w-full bg-white border border-gray-200 rounded-md shadow-lg mt-1">
                   {filteredSourcePlaces.map((place, index) => (
@@ -269,7 +234,7 @@ const selectDestination = (place: typeof mockPlaces[0]) => {
                       key={index}
                       className="p-2 hover:bg-gray-100 cursor-pointer"
                       onMouseDown={(e) => e.preventDefault()}
-                      onClick={() => selectSource(place)}
+                      onClick={() => {selectSource(place);sessionStorage.setItem('source',place.name)}}
                     >
                       <div className="font-medium">{place.name}</div>
                       <div className="text-sm text-gray-500">{place.fullName}</div>
@@ -280,40 +245,30 @@ const selectDestination = (place: typeof mockPlaces[0]) => {
             </div>
           </div>
 
-         <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
-      <div className="w-10 h-10 bg-white  border-l-2 border-r-2 border-gray-200 border-t-none  border-b-none rounded-full flex items-center justify-center">
-        <span className="text-xs">⇌</span>
-      </div>
-    </div>
+          <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+            <div className="w-10 h-10 bg-white border-l-2 border-r-2 border-gray-200 border-t-none border-b-none rounded-full flex items-center justify-center">
+              <span className="text-xs">⇌</span>
+            </div>
+          </div>
 
- <div className="flex-1 relative">
-      <div className="relative">
-        <input
-          type="text"
-          value={destinationInput}
-          onChange={handleDestinationInputChange}
-          onFocus={() => setShowDestinationSuggestions(destinationInput.length > 0)}
-          onBlur={() => setTimeout(() => setShowDestinationSuggestions(false), 150)}
-          placeholder="Destination"
-          className="p-3 border rounded w-full text-sm pl-4"  // Added pl-10 for padding
-          style={{
-            minHeight: '48px',
-            border: '1px solid #d1d5db',
-            borderRadius: '0.375rem',
-            boxShadow: 'none'
-          }}
-        />
-              {/* {destination && (
-                <button
-                  onClick={() => {
-                    handleClearDestination();
-                    setDestinationInput('');
-                  }}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  ✕
-                </button>
-              )} */}
+          <div className="flex-1 relative">
+            <div className="relative">
+              <input
+                type="text"
+                value={destinationInput}
+                onChange={handleDestinationInputChange}
+                onFocus={() => setShowDestinationSuggestions(destinationInput.length > 0)}
+                onBlur={() => setTimeout(() => setShowDestinationSuggestions(false), 150)}
+                placeholder="Destination"
+                className="p-3 border rounded w-full text-sm pl-4"
+                style={{
+                  minHeight: '48px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.375rem',
+                  boxShadow: 'none',
+                  fontSize: '16px' // Prevent zoom on iOS
+                }}
+              />
               {showDestinationSuggestions && filteredDestinationPlaces.length > 0 && (
                 <div className="absolute z-10 w-full bg-white border border-gray-200 rounded-md shadow-lg mt-1">
                   {filteredDestinationPlaces.map((place, index) => (
@@ -321,7 +276,7 @@ const selectDestination = (place: typeof mockPlaces[0]) => {
                       key={index}
                       className="p-2 hover:bg-gray-100 cursor-pointer"
                       onMouseDown={(e) => e.preventDefault()}
-                      onClick={() => selectDestination(place)}
+                      onClick={() => {selectDestination(place);sessionStorage.setItem('destination',place.name)}}
                     >
                       <div className="font-medium">{place.name}</div>
                       <div className="text-sm text-gray-500">{place.fullName}</div>
@@ -334,79 +289,60 @@ const selectDestination = (place: typeof mockPlaces[0]) => {
         </div>
 
         {/* Date Input */}
-       {/* Date Inputs - Updated to show both depart and return dates */}
-<div className="flex gap-2">
-  <div className="flex-1">
-    <input
-      type="date"
-      value={formatDateForInput(departDate)}
-      onChange={handleDepartDateChange}
-      min={formatDateForInput(new Date())}
-      className="p-3 border rounded w-full text-sm"
-      style={{
-        minHeight: '48px',
-        border: '1px solid #d1d5db',
-        borderRadius: '0.375rem'
-      }}
-    />
-  </div>
-  
-  <div className="flex-1">
-    <input
-      type="date"
-      value={formatDateForInput(returnDate)}
-      onChange={handleReturnDateChange}
-      min={formatDateForInput(departDate) || formatDateForInput(new Date())}
-  
-      className="p-3 border rounded w-full text-sm"
-      style={{
-        minHeight: '48px',
-        border: '1px solid #d1d5db',
-        borderRadius: '0.375rem'
-      }}
-    />
-  </div>
-</div>
+        <div className="flex gap-2">
+          <div className="flex-1">
+            <input
+              type="date"
+              value={formatDateForInput(departDate)}
+              onChange={handleDepartDateChange}
+              min={formatDateForInput(new Date())}
+              className="p-3 border rounded w-full text-sm"
+              style={{
+                minHeight: '48px',
+                border: '1px solid #d1d5db',
+                borderRadius: '0.375rem'
+              }}
+            />
+          </div>
+        </div>
 
         {/* Bottom Row with Trip Type, Passengers, Class */}
         <div className="flex gap-2">
-           
-        <div className="flex gap-2">
-  <div className="flex-1 relative">
-    <button
-      className="p-3 w-full  rounded text-sm flex items-center justify-between"
-      style={{
-        minHeight: '48px',
-        border: '1px solid #d1d5db',
-        borderRadius: '0.375rem',
-      }}
-      onClick={() => setShowTripDropdown(prev => !prev)}
-    >
-      <span>{tripOptions.find(option => option.value === tripType)?.label}</span>
-      <span className="text-gray-900"><RiArrowDropDownLine  className='text-2xl'/></span>
-    </button>
+          <div className="flex gap-2">
+            <div className="flex-1 relative">
+              <button
+                className="p-3 w-full rounded text-sm flex items-center justify-between"
+                style={{
+                  minHeight: '48px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.375rem',
+                }}
+                onClick={() => setShowTripDropdown(prev => !prev)}
+              >
+                <span>{tripOptions.find(option => option.value === tripType)?.label}</span>
+                <span className="text-gray-900"></span>
+              </button>
 
-    {showTripDropdown && (
-      <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded shadow z-10">
-        {tripOptions.map(option => (
-          <div
-            key={option.value}
-            className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${
-              option.value === tripType ? 'bg-gray-100' : ''
-            }`}
-            onClick={() => {
-              setTripType(option.value as "roundTrip" | "oneWay");
-              setShowTripDropdown(false);
-            }}
-          >
-            {option.label}
+              {showTripDropdown && (
+                <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded shadow z-10">
+                  {tripOptions.map(option => (
+                    <div
+                      key={option.value}
+                      className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${
+                        option.value === tripType ? 'bg-gray-100' : ''
+                      }`}
+                      onClick={() => {
+                        setTripType(option.value as "oneWay");
+                        setShowTripDropdown(false);
+                      }}
+                    >
+                      {option.label}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        ))}
-      </div>
-    )}
-  </div>
-</div>
-
           
           <div className="flex-1">
             <div className="p-3 border rounded text-sm flex items-center justify-between"
@@ -416,7 +352,11 @@ const selectDestination = (place: typeof mockPlaces[0]) => {
                    borderRadius: '0.375rem'
                  }}>
               <span>1</span>
-              <span className="text-gray-900"><RiArrowDropDownLine  className='text-2xl'/></span>
+              <span className="text-gray-900">
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </span>
             </div>
           </div>
           
@@ -428,7 +368,8 @@ const selectDestination = (place: typeof mockPlaces[0]) => {
               style={{
                 minHeight: '48px',
                 border: '1px solid #d1d5db',
-                borderRadius: '0.375rem'
+                borderRadius: '0.375rem',
+                fontSize: '16px' // Prevent zoom on iOS
               }}
             >
               <option>Economy</option>
@@ -440,14 +381,14 @@ const selectDestination = (place: typeof mockPlaces[0]) => {
 
         {/* Search Button */}
         <button
-  onClick={handleSearch}
-  disabled={isSearchDisabled()}
-  className={`w-full bg-[#8c6d73] text-white py-3 rounded-md hover:bg-[#8a767a] transition-colors font-medium ${
-    isSearchDisabled() ? 'opacity-50 cursor-not-allowed' : ''
-  }`}
->
-  Explore
-</button>
+          onClick={handleSearch}
+          disabled={isSearchDisabled()}
+          className={`w-full bg-[#8c6d73] text-white py-3 rounded-md hover:bg-[#8a767a] transition-colors font-medium ${
+            isSearchDisabled() ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+        >
+          Explore
+        </button>
       </div>
 
       {/* Desktop Layout (unchanged) */}

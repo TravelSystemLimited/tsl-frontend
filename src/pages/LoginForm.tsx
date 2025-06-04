@@ -21,7 +21,7 @@ const LoginForm: React.FC = () => {
     };
     useEffect(()=>{
         sessionStorage.clear();
-    },[])
+    },[]);
 
     return (
         <div className="w-full max-w-md">

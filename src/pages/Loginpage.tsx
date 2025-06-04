@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Logo from '../components/Logo';
 import LoginForm from './LoginForm';
 
 
 const Login: React.FC = () => {
-  
+  useEffect(()=>{
+          sessionStorage.clear();
+      },[]);
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Left side - Logo */}

@@ -12,29 +12,21 @@ const Header: React.FC<HeaderProps> = ({ username }) => {
   const [notificationCount, setNotificationCount] = useState(0);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Check for pending requests count in session storage
+useEffect(() => {
+  const updateCount = () => {
     const count = sessionStorage.getItem('pendingRequestsCount');
-    if (count) {
-      setNotificationCount(parseInt(count));
-    }
+    setNotificationCount(count ? parseInt(count) : 0);
+  };
 
-    // Listen for storage changes to update the count
-    const handleStorageChange = () => {
-      const newCount = sessionStorage.getItem('pendingRequestsCount');
-      if (newCount) {
-        setNotificationCount(parseInt(newCount));
-      } else {
-        setNotificationCount(0);
-      }
-    };
+  updateCount(); // Initial load
 
-    window.addEventListener('storage', handleStorageChange);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
+  window.addEventListener('pendingRequestsUpdated', updateCount);
+
+  return () => {
+    window.removeEventListener('pendingRequestsUpdated', updateCount);
+  };
+}, []);
+
 
   const handleNotificationClick = () => {
     navigate('/dashboard/requests');
@@ -48,8 +40,12 @@ const Header: React.FC<HeaderProps> = ({ username }) => {
       </div>
 
       {/* Account and notification icons on the right corner */}
+     
       <div className="flex items-center  gap-8 md:gap-4 text-[#6c6c6c]">
+        
         <div className="relative">
+          {username==="Manager Name" &&
+          <div>
           <FiBell 
             className="text-2xl cursor-pointer" 
             onClick={handleNotificationClick}
@@ -58,8 +54,14 @@ const Header: React.FC<HeaderProps> = ({ username }) => {
             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
               {notificationCount}
             </span>
+            
           )}
+          </div>
+}
+        
         </div>
+
+   
         <VscAccount className="text-2xl" />
       </div>
     </header>

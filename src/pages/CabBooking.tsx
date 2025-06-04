@@ -122,7 +122,7 @@ const CabBooking = () => {
       <div className="flex justify-end items-center mb-4">
        
         <div className="flex gap-4 items-center justify-end text-sm">
-          <button className="text-gray-500 hover:underline" onClick={()=>navigate('/checkout')}>Skip</button>
+          <button className="text-gray-500 hover:underline" onClick={()=>{navigate('/checkout');sessionStorage.removeItem('selectedCab')}}>Skip</button>
           <button className="flex items-center gap-2 bg-[#7d5c65] text-white px-4 py-1.5 rounded-md" onClick={()=>navigate('/checkout')}>
             <span>Book</span>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
