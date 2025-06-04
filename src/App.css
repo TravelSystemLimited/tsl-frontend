@@ -3,6 +3,12 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  touch-action: manipulation; /* disables pinch and double tap zoom */
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -ms-user-select: none;
+  -webkit-text-size-adjust: 100%; /* Prevent font scaling */
 }
 
 .logo {
