@@ -279,7 +279,7 @@ const handleEmployeeChange = (value: string) => {
         /* Flight results */
         <div className="mt-8 pb-9">
           <h2 className="text-sm md:text-lg text-gray-700 font-semibold mb-4 ml-4">
-            Flights from {searchParams.from || flights[0]?.from} to {searchParams.to || flights[0]?.to}
+            Flights from {searchParams.from || flights[0]?.from } to {searchParams.to || flights[0]?.to}
           </h2>
           <div className="grid gap-6 p-3 sm:grid-cols-2 lg:grid-cols-2 text-center">
             {flights.map((flight, index) => (

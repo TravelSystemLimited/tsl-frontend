@@ -32,6 +32,10 @@ const FlightSearchBar: React.FC<FlightSearchBarProps> = ({ onSearch }) => {
   const isSearchDisabled = () => {
     return !source || !destination || !departDate;
   };
+  
+  const from = sessionStorage.getItem('source') || '';
+    const to = sessionStorage.getItem('destination') || '';
+    const departureDate = sessionStorage.getItem('departureDate');
 
   const handleDepartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newDate = new Date(e.target.value);
@@ -230,7 +234,7 @@ const FlightSearchBar: React.FC<FlightSearchBarProps> = ({ onSearch }) => {
                       key={index}
                       className="p-2 hover:bg-gray-100 cursor-pointer"
                       onMouseDown={(e) => e.preventDefault()}
-                      onClick={() => selectSource(place)}
+                      onClick={() => {selectSource(place);sessionStorage.setItem('source',place.name)}}
                     >
                       <div className="font-medium">{place.name}</div>
                       <div className="text-sm text-gray-500">{place.fullName}</div>
@@ -272,7 +276,7 @@ const FlightSearchBar: React.FC<FlightSearchBarProps> = ({ onSearch }) => {
                       key={index}
                       className="p-2 hover:bg-gray-100 cursor-pointer"
                       onMouseDown={(e) => e.preventDefault()}
-                      onClick={() => selectDestination(place)}
+                      onClick={() => {selectDestination(place);sessionStorage.setItem('destination',place.name)}}
                     >
                       <div className="font-medium">{place.name}</div>
                       <div className="text-sm text-gray-500">{place.fullName}</div>
